@@ -10,7 +10,10 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
+
+    public const ACTIVE = 1;
+    public const DEACTIVE = 0;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +24,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
+        'gender',
+        'status',
     ];
 
     /**
@@ -44,8 +50,9 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->hasOne('App\Role', 'id', 'role_id');
+        return $this->hasOne(Role::class,);
     }
+
     public function userAvatar($request)
     {
         $image = $request->file('image');
