@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
+use App\Models\User;
+use PhpParser\Comment\Doc;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -13,7 +16,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // $this->middleware('auth');
     }
 
     /**
@@ -23,6 +26,18 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $doctors = User::activeDoctors()->latest()->take(3)->get();
+        return view('frontend.index', get_defined_vars());
+    }
+
+    /**
+     * Show the doctor page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function doctor()
+    {
+        $doctors = User::activeDoctors()->latest()->get();
+        return view('frontend.doctor', get_defined_vars());
     }
 }

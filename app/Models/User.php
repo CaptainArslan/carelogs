@@ -61,4 +61,10 @@ class User extends Authenticatable
         $image->move($destination, $name);
         return $name;
     }
+
+    public function scopeActiveDoctors($query)
+    {
+        return $query->where('role_id', Role::DOCTOR)
+            ->where('status', User::ACTIVE);
+    }
 }

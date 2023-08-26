@@ -19,21 +19,10 @@ class UserSeeder extends Seeder
     {    
         User::create(
             [
-                "name" => 'Admin',
-                "email" => 'admin@gmail.com',
-                "email_verified_at" => now(),
-                'password' => Hash::make('password'),
-                'role_id' => Role::ADMIN,
-                'gender' => 'male',
-                'status' => User::ACTIVE,
-            ],
-        );
-        User::create(
-            [
                 "name" => 'doctor',
                 "email" => 'doctor@gmail.com',
                 "email_verified_at" => now(),
-                'password' => Hash::make('password'),
+                'password' => Hash::make('12345678'),
                 'role_id' => Role::DOCTOR,
                 'gender' => 'male',
                 'status' => User::ACTIVE,
@@ -44,13 +33,13 @@ class UserSeeder extends Seeder
                 "name" => 'patient',
                 "email" => 'patient@gmail.com',
                 "email_verified_at" => now(),
-                'password' => Hash::make('password'),
+                'password' => Hash::make('12345678'),
                 'role_id' => Role::PATIENT,
                 'gender' => 'male',
                 'status' => User::ACTIVE,
             ],
         );
 
-        User::factory(20)->create();
+        User::factory(200)->create();
     }
 }

@@ -17,15 +17,23 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+        $department = null;
+        $role_id = $this->faker->randomElement([
+            Role::DOCTOR,
+            Role::PATIENT
+        ]);
+        if ($role_id == Role::DOCTOR) {
+            $department = $this->faker->word();
+        }
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => Hash::make('12345678'), // password
-            'role_id' => $this->faker->randomElement([
-                Role::DOCTOR,
-                Role::PATIENT
-            ]),
+            'phone_number' => $this->faker->phoneNumber(), // password
+            'role_id' => $role_id,
+            'department' => $department,
+            'image' => $this->faker->imageUrl(),
             'gender' => $this->faker->randomElement([
                 'male', 'female', 'other'
             ]),

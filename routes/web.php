@@ -24,15 +24,15 @@ use App\Http\Controllers\PrescriptionController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-Route::get('/', function () {
-    return view('frontend.index');
-});
-Route::get('/detail', function () {
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/doctors', [HomeController::class, 'doctor'])->name('frontend.doctor');
+
+Route::get('/blog-detail', function () {
     return view('frontend.detail');
 });
 Auth::routes();
 
-// Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('frontend.home');
 
 // Patient Routes
 // Route::group(['middleware' => ['auth', 'patient']], function () {
