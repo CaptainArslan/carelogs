@@ -19,6 +19,7 @@ class Admin
     public function handle(Request $request, Closure $next)
     {
         if (Auth::user()->role->name == Role::ADMIN) {
+            return redirect('dashboard');
             return $next($request);
         } else {
             abort(401);
