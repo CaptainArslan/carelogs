@@ -52,9 +52,11 @@
                     <!-- <li><a href="#news" class="smoothScroll">News</a></li> -->
                     <li><a href="#google-map" class="smoothScroll">Contact</a></li>
                     @if (Auth::user())
-                    <li><a href="#news" class="smoothScroll">Appointment</a></li>
-                    <li><a href="#news" class="smoothScroll">Prescription</a></li>
-                    <li class="appointment-btn"><a href="#appointment">Make an appointment</a></li>
+                    <li><a href="{{ route('profile') }}" class="">Profile</a></li>
+                    <li><a href="#appointment" class="smoothScroll">Appointment</a></li>
+                    <li><a href="{{ route('my.booking') }}" class="smoothScroll">Booking</a></li>
+                    <li><a href="{{ route('my.prescription') }}" class="smoothScroll">Prescription</a></li>
+                    <li class="appointment-btn"><a href="{{ route('book.appointment') }}">Make an appointment</a></li>
                     @else
                     <li><a href="{{ route('register') }}" class="smoothScroll">Sign up</a></li>
                     <li><a href="{{ route('login') }}" class="smoothScroll">Sign in</a></li>
