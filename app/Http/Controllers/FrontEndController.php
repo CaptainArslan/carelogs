@@ -50,43 +50,42 @@ class FrontEndController extends Controller
      */
     public function store(Request $request)
     {
-         // Set timezone
-         date_default_timezone_set('America/New_York');
+        // Set timezone
+        date_default_timezone_set('America/New_York');
 
-         $request->validate(['time' => 'required']);
-         $check = $this->checkBookingTimeInterval();
-         if ($check) {
-             return redirect()->back()->with('errMessage', 'You already made an appointment. Please check your email for the appointment!');
-         }
+        $request->validate(['time' => 'required']);
+        $check = $this->checkBookingTimeInterval();
+        if ($check) {
+            return redirect()->back()->with('errMessage', 'You already made an appointment. Please check your email for the appointment!');
+        }
 
-         $doctorId = $request->doctorId;
-         $time = $request->time;
-         $appointmentId = $request->appointmentId;
-         $date = $request->date;
-         Booking::create([
-             'user_id' => auth()->user()->id,
-             'doctor_id' => $doctorId,
-             'time' => $time,
-             'date' => $date,
-             'status' => 0
-         ]);
-         $doctor = User::where('id', $doctorId)->first();
-         Time::where('appointment_id', $appointmentId)->where('time', $time)->update(['status' => 1]);
+        $doctorId = $request->doctorId;
+        $time = $request->time;
+        $appointmentId = $request->appointmentId;
+        $date = $request->date;
+        Booking::create([
+            'user_id' => auth()->user()->id,
+            'doctor_id' => $doctorId,
+            'time' => $time,
+            'date' => $date,
+            'status' => 0
+        ]);
+        $doctor = User::where('id', $doctorId)->first();
+        Time::where('appointment_id', $appointmentId)->where('time', $time)->update(['status' => 1]);
 
-         // Send email notification
-         $mailData = [
-             'name' => auth()->user()->name,
-             'time' => $time,
-             'date' => $date,
-             'doctorName' => $doctor->name
-         ];
-         try {
-             \Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
-         } catch (\Exception $e) {
-         }
+        // Send email notification
+        $mailData = [
+            'name' => auth()->user()->name,
+            'time' => $time,
+            'date' => $date,
+            'doctorName' => $doctor->name
+        ];
+        try {
+            \Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
+        } catch (\Exception $e) {
+        }
 
-         return redirect()->back()->with('message', 'Your appointment was booked for ' . $date . ' at ' . $time . ' with ' . $doctor->name . '.');
-
+        return redirect()->back()->with('message', 'Your appointment was booked for ' . $date . ' at ' . $time . ' with ' . $doctor->name . '.');
     }
 
     /**

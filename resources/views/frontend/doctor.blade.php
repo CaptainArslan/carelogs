@@ -13,10 +13,16 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 col-sm-6">
-                <div class="about-info">
-                    <h2 class="wow fadeInUp" data-wow-delay="0.1s">Available Doctors</h2>
-                    <label for="date">Please Select date</label>
-                    <input type="date">
+                <div class="about-info" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="col-md-12 col-sm-6">
+                        <h2 class="wow fadeInUp" data-wow-delay="0.1s">Available Doctors</h2>
+                    </div>
+                    <div class="col-md-12 col-sm-6">
+                        <form action="{{ route('frontend.doctor') }}" method="GET" id="form">
+                            <input type="date" name="date" value="{{ old('date') }}" class="form-control" onchange="formSubmit()">
+                        </form>
+                    </div>
+
                 </div>
             </div>
             <div class="clearfix"></div>
@@ -32,21 +38,26 @@
                             <p><i class="fa fa-envelope-o"></i> <a href="#">{{ $appointment->doctor->email }}</a></p>
                         </div>
                         <ul class="social-icon">
-                            <li><a href="#" class="fa fa-linkedin-square"></a></li>
+                            <!-- <li><a href="#" class="fa fa-linkedin-square"></a></li> -->
                             <li><a href="#" class="fa fa-envelope-o"></a></li>
                         </ul>
+                        @if (Auth::user() && Auth::user()->id)
+                        <a href="{{ route('create.appointment', [$appointment->user_id, $appointment->date]) }}" class="section-btn btn btn-default smoothScroll">Make an Appointment</a>
+                        @endif
                     </div>
-
                 </div>
             </div>
             @empty
-            <p class="text-center">No Dcotor Found</p>
+            <h4 class="text-danger text-center">No Doctor Avaialable at ( {{ date('d, M y', strtotime(request()->date))}} ) </h4 class="text-danger text-center">
             @endforelse
-
-
         </div>
     </div>
 </section>
 
+<script>
+    function formSubmit() {
+        document.getElementById('form').submit();
+    }
+</script>
 
 @endsection

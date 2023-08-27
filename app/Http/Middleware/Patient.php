@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,11 +18,11 @@ class Patient
      */
     public function handle(Request $request, Closure $next)
     {
-        return $next($request);
-        if (Auth::user()->role->name == 'patient' || Auth::user()->role->name == 'admin') {
+        if (Auth::user()->role->name == Role::PATIENT || Auth::user()->role->name == Role::ADMIN) {
             return $next($request);
         } else {
             return redirect()->back();
         };
+        return $next($request);
     }
 }

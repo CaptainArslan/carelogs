@@ -18,7 +18,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth');
+        $this->middleware('auth');
     }
 
     /**
@@ -37,9 +37,13 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function doctor()
+    public function doctor(Request $request)
     {
         $appointments = Appointment::where('date', date('m-d-Y'))->get();
+        if ($request->date) {
+            $formatDate = date('m-d-Y', strtotime($request->date));
+            $appointments = Appointment::where('date', $formatDate)->get();
+        };
         return view('frontend.doctor', get_defined_vars());
     }
 }
