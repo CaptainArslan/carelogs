@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
 use App\Models\Role;
 use App\Models\User;
 use PhpParser\Comment\Doc;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class HomeController extends Controller
 {
@@ -37,7 +39,7 @@ class HomeController extends Controller
      */
     public function doctor()
     {
-        $doctors = User::activeDoctors()->latest()->get();
+        $appointments = Appointment::where('date', date('m-d-Y'))->get();
         return view('frontend.doctor', get_defined_vars());
     }
 }

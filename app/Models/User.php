@@ -67,4 +67,9 @@ class User extends Authenticatable
         return $query->where('role_id', Role::DOCTOR)
             ->where('status', User::ACTIVE);
     }
+
+    public function scopeWhereRoleIsDoctor($query)
+    {
+        return $query->where('role_id', Role::DOCTOR);
+    }
 }
