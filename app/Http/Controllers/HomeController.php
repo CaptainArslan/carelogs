@@ -30,7 +30,7 @@ class HomeController extends Controller
     public function index()
     {
         // redirect to dashboard if user is admin or doctor
-        if (Auth::user()->role->name == 'admin' || Auth::user()->role->name == 'doctor') {
+        if (Auth::user()->role->name == Role::ADMINROLE || Auth::user()->role->name == Role::DOCTORROLE) {
             return redirect()->to('/dashboard');
         };
         $doctors = User::activeDoctors()->latest()->take(3)->get();

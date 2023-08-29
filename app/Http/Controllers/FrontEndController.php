@@ -9,6 +9,7 @@ use App\Models\Booking;
 use App\Models\Appointment;
 use App\Models\Prescription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FrontEndController extends Controller
 {
@@ -19,17 +20,19 @@ class FrontEndController extends Controller
      */
     public function index()
     {
+        $doctors = User::activeDoctors()->latest()->take(3)->get();
+        return view('frontend.index', get_defined_vars());
         // Set timezone
-        date_default_timezone_set('America/New_York');
-        // If there is set date, find the doctors
-        if (request('date')) {
-            $formatDate = date('m-d-yy', strtotime(request('date')));
-            $doctors = Appointment::where('date', $formatDate)->get();
-            return view('welcome', compact('doctors', 'formatDate'));
-        };
-        // Return all doctors avalable for today to the welcome page
-        $doctors = Appointment::where('date', date('m-d-yy'))->get();
-        return view('welcome', compact('doctors'));
+        // date_default_timezone_set('America/New_York');
+        // // If there is set date, find the doctors
+        // if (request('date')) {
+        //     $formatDate = date('m-d-yy', strtotime(request('date')));
+        //     $doctors = Appointment::where('date', $formatDate)->get();
+        //     return view('welcome', compact('doctors', 'formatDate'));
+        // };
+        // // Return all doctors avalable for today to the welcome page
+        // $doctors = Appointment::where('date', date('m-d-yy'))->get();
+        // return view('welcome', compact('doctors'));
     }
 
     /**

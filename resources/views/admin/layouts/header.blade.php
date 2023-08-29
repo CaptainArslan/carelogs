@@ -20,8 +20,7 @@
     <link rel="stylesheet" href="{{ asset('template/plugins/perfect-scrollbar/css/perfect-scrollbar.css') }}">
     <link rel="stylesheet" href="{{ asset('template/plugins/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/plugins/jvectormap/jquery-jvectormap.css') }}">
-    <link rel="stylesheet"
-        href="{{ asset('template/plugins/tempusdominus-bootstrap-4/build/css/tempusdominus-bootstrap-4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template/plugins/tempusdominus-bootstrap-4/build/css/tempusdominus-bootstrap-4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/plugins/weather-icons/css/weather-icons.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/plugins/c3/c3.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template/plugins/owl.carousel/dist/assets/owl.carousel.min.css') }}">
@@ -48,13 +47,11 @@
                                 <span class="input-group-addon search-btn"><i class="ik ik-search"></i></span>
                             </div>
                         </div> --}}
-                        <button type="button" id="navbar-fullscreen" class="nav-link"><i
-                                class="ik ik-maximize"></i></button>
+                        <button type="button" id="navbar-fullscreen" class="nav-link"><i class="ik ik-maximize"></i></button>
                     </div>
                     <div class="top-menu d-flex align-items-center">
                         <div class="dropdown">
-                            <a class="dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
+                            <a class="dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <strong>{{ strtoupper(Auth()->user()->name) }}</strong>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
@@ -62,13 +59,11 @@
                                                     document.getElementById('logout-form').submit();">
                                     <i class="ik ik-power dropdown-icon"></i> {{ __('Logout') }}
                                 </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                    style="display: none;">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                     @csrf
                                 </form>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

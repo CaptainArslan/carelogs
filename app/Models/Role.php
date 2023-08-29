@@ -10,8 +10,11 @@ class Role extends Model
     use HasFactory;
 
     public const ADMIN = 1;
+    public const ADMINROLE = 'admin';
     public const DOCTOR = 2;
+    public const DOCTORROLE = 'doctor';
     public const PATIENT = 3;
+    public const PATIENTROLE = 'patient';
 
     protected $guarded = [];
 

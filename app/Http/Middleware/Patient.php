@@ -18,7 +18,7 @@ class Patient
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::user()->role->name == Role::PATIENT || Auth::user()->role->name == Role::ADMIN) {
+        if (Auth::user()->role->name == Role::PATIENTROLE || Auth::user()->role->name == Role::ADMINROLE) {
             return $next($request);
         } else {
             return redirect()->back();
