@@ -7,6 +7,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FrontEndController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\PatientListController;
 use App\Http\Controllers\PrescriptionController;
 
@@ -27,12 +28,8 @@ use App\Http\Controllers\PrescriptionController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/doctors', [HomeController::class, 'doctor'])->name('frontend.doctor');
 Route::get('/new-appointment/{doctorId}/{date}', [FrontEndController::class, 'show'])->name('create.appointment');
-
-Route::get('/blog-detail', function () {
-    return view('frontend.detail');
-});
 Auth::routes();
-
+Route::get('/dashboard', [DashBoardController::class, 'index'])->name('dashboard');
 Route::get('/home', [HomeController::class, 'index'])->name('frontend.home');
 
 // Patient Routes

@@ -18,6 +18,7 @@ class DashBoardController extends Controller
         if (Auth::user()->role->name == 'patient') {
             return view('home');
         };
+
         return view('dashboard');
     }
 }

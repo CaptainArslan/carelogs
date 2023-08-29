@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Appointment;
 use App\Models\Role;
 use App\Models\User;
 use PhpParser\Comment\Doc;
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -18,7 +19,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth');
+        $this->middleware('auth');
     }
 
     /**
@@ -28,6 +29,10 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // redirect to dashboard if user is admin or doctor
+        if (Auth::user()->role->name == 'admin' || Auth::user()->role->name == 'doctor') {
+            return redirect()->to('/dashboard');
+        };
         $doctors = User::activeDoctors()->latest()->take(3)->get();
         return view('frontend.index', get_defined_vars());
     }
