@@ -45,10 +45,7 @@
 
                                 <td>
                                     @php
-                                    $hasPrescription = App\Models\Prescription::where('date', date('m-d-yy'))
-                                    ->where('doctor_id', auth()->user()->id)
-                                    ->where('user_id', $booking->user->id)
-                                    ->exists();
+                                    $hasPrescription = hasPrescription(date('m-d-Y'), $booking->user->id, $booking->doctor->id);
                                     @endphp
                                     @if (!$hasPrescription)
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{ $booking->user_id }}">
