@@ -51,10 +51,14 @@
                                     @endif
                                 </td>
                                 <td>
-                                    {{--  @if (!App\Prescription::where('date', date('m-d-yy'))
+                                    @php
+                                    $hasPrescription = App\Models\Prescription::where('date', date('m-d-yy'))
                                     ->where('doctor_id', auth()->user()->id)
                                     ->where('user_id', $booking->user->id)
-                                    ->exists())
+                                    ->exists();
+                                    @endphp
+
+                                    @if (!$hasPrescription)
                                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{ $booking->user_id }}">
                                         Prescribe
                                     </button>
@@ -62,8 +66,7 @@
 
                                     @else
                                     <a href="{{ route('prescription.show', [$booking->user_id, $booking->date]) }}" class="btn btn-info">View</a>
-                                    @endif --}}
-                                    <a href="{{ route('prescription.show', [$booking->user_id, $booking->date]) }}" class="btn btn-info">View</a>
+                                    @endif
                                 </td>
                             </tr>
                             @empty

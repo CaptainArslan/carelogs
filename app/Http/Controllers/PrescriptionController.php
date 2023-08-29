@@ -11,11 +11,27 @@ class PrescriptionController extends Controller
 {
     public function index()
     {
-        // date_default_timezone_set('America/New_York');
-        // Get the DOCTOR PATIENTS appointment on the date and checked-in
-        $bookings = Booking::where('date', date('m-d-Y'))->where('status', 1)->where('doctor_id', Auth::id())->get();
-        return view('prescription.index', compact('bookings'));
+        // Get the DOCTOR PATIENTS appointments on the date and checked-in
+        $bookings = Booking::where('date', date('m-d-Y'))
+            ->where('status', 1)
+            ->where('doctor_id', Auth::id())
+            ->get();
+
+        $prescriptionsByBooking = [];
+
+        foreach ($bookings as $booking) {
+            $prescriptions = Prescription::where('date', date('m-d-yy'))
+                ->where('doctor_id', Auth::id())
+                ->where('user_id', $booking->user->id)
+                ->get();
+
+            $prescriptionsByBooking[$booking->id] = $prescriptions;
+        }
+
+
+        return view('prescription.index', compact('bookings', 'prescriptionsByBooking'));
     }
+
 
     public function store(Request $request)
     {
