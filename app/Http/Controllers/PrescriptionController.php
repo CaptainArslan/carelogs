@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Prescription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PrescriptionController extends Controller
 {
     public function index()
     {
-        date_default_timezone_set('America/New_York');
+        // date_default_timezone_set('America/New_York');
         // Get the DOCTOR PATIENTS appointment on the date and checked-in
-        $bookings = Booking::where('date', date('m-d-yy'))->where('status', 1)->where('doctor_id', auth()->user()->id)->get();
+        $bookings = Booking::where('date', date('m-d-Y'))->where('status', 1)->where('doctor_id', Auth::id())->get();
         return view('prescription.index', compact('bookings'));
     }
 

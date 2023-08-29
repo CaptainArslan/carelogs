@@ -53,8 +53,9 @@
                     <li><a href="#google-map" class="smoothScroll">Contact</a></li>
                     @if (Auth::user())
                     <li><a href="{{ route('profile') }}" class="">Profile</a></li>
-                    <li><a href="#appointment" class="smoothScroll">Appointment</a></li>
-                    <li><a href="{{ route('my.booking') }}" class="smoothScroll">Booking</a></li>
+                    <!-- <li><a href="#appointment" class="smoothScroll">Appointment</a></li> -->
+                    <!-- <li><a href="{{ route('my.booking') }}" class="smoothScroll">Booking</a></li> -->
+                    <li><a href="{{ route('my.booking') }}" class="smoothScroll">Appointments</a></li>
                     <li><a href="{{ route('my.prescription') }}" class="smoothScroll">Prescription</a></li>
                     <!-- <li class="appointment-btn"><a href="{{ route('frontend.doctor') }}">Make an appointment</a></li> -->
                     @else

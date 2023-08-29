@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Time;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\AdminSeeder;
+use Database\Seeders\BookingSeeder;
 use Database\Seeders\ApointmentSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,6 +24,8 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             UserSeeder::class,
             AppointmentSeeder::class,
+            TimeSeeder::class,
+            BookingSeeder::class,
         ]);
     }
 }
