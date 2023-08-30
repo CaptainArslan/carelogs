@@ -16,20 +16,7 @@ class PrescriptionController extends Controller
             ->where('status', 1)
             ->where('doctor_id', Auth::id())
             ->get();
-
-        $prescriptionsByBooking = [];
-
-        foreach ($bookings as $booking) {
-            $prescriptions = Prescription::where('date', date('m-d-yy'))
-                ->where('doctor_id', Auth::id())
-                ->where('user_id', $booking->user->id)
-                ->get();
-
-            $prescriptionsByBooking[$booking->id] = $prescriptions;
-        }
-
-
-        return view('prescription.index', compact('bookings', 'prescriptionsByBooking'));
+        return view('prescription.index', compact('bookings'));
     }
 
 
