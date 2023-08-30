@@ -50,7 +50,7 @@
                         <a href="{{ route('create.appointment', [$appointment->user_id, $appointment->date]) }}" class="section-btn btn btn-default smoothScroll">Make an Appointment</a>
                         @endif
                     </div>
-                </div>
+                </div><br>
             </div>
             @empty
             <h4 class="text-danger text-center">No Doctor Avaialable at ( {{ date('d, M y', strtotime(request()->date))}} ) </h4 class="text-danger text-center">

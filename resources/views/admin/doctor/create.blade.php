@@ -172,7 +172,7 @@
                                 <label>Role</label>
                                 <select name="role_id" class="form-control @error('role_id') is-invalid @enderror">
                                     <option value="">Please select a role</option>
-                                    @foreach (App\Role::where('name', '!=', 'patient')->get() as $role)
+                                    @foreach (App\Models\Role::where('name', '!=', 'patient')->get() as $role)
                                         <option value="{{ $role->id }}">{{ $role->name }}</option>
                                     @endforeach
 

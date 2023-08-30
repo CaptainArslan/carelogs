@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('frontend.layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container" style="margin-top: 50px">
         @if (Session::has('message'))
             <div class="alert alert-success">{{ Session::get('message') }}</div>
         @endif
-        <div class="row ">
+        <div class="row">
 
             <div class="col-md-3">
                 <div class="card">

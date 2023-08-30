@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class DoctorController extends Controller
     public function index()
     {
         // Get the doctor info
-        $users  = User::get()->where('role_id', 1);
+        $users  = User::get()->where('role_id', Role::DOCTOR);
         return view('admin.doctor.index', compact('users'));
     }
 
