@@ -26,7 +26,7 @@ use App\Http\Controllers\PrescriptionController;
 //     return view('welcome');
 // });
 Route::get('/', [FrontEndController::class, 'index'])->name('home');
-Route::get('/doctors', [HomeController::class, 'doctor'])->name('frontend.doctor');
+Route::get('/doctors', [FrontEndController::class, 'doctor'])->name('frontend.doctor');
 Route::get('/new-appointment/{doctorId}/{date}', [FrontEndController::class, 'show'])->name('create.appointment');
 Auth::routes();
 Route::get('/dashboard', [DashBoardController::class, 'index'])->name('dashboard');

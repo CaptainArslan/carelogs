@@ -10,6 +10,7 @@ use App\Models\Appointment;
 use App\Models\Prescription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class FrontEndController extends Controller
 {
@@ -84,7 +85,7 @@ class FrontEndController extends Controller
             'doctorName' => $doctor->name
         ];
         try {
-            \Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
+            // Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
         } catch (\Exception $e) {
         }
 
@@ -159,5 +160,20 @@ class FrontEndController extends Controller
     {
         $prescriptions = Prescription::where('user_id', auth()->user()->id)->get();
         return view('my-prescription', compact('prescriptions'));
+    }
+
+    /**
+     * Show the doctor page.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function doctor(Request $request)
+    {
+        $appointments = Appointment::where('date', date('m-d-Y'))->get();
+        if ($request->date) {
+            $formatDate = date('m-d-Y', strtotime($request->date));
+            $appointments = Appointment::where('date', $formatDate)->get();
+        };
+        return view('frontend.doctor', get_defined_vars());
     }
 }
