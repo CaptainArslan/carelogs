@@ -50,6 +50,9 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/status/update/{id}', 'PatientListController@toggleStatus')->name('update.status');
     Route::get('/all-patients', 'PatientListController@allTimeAppointment')->name('all.appointments');
     Route::resource('/department', 'DepartmentController');
+
+    Route::get('/admin-profile', 'ProfileController@index')->name('admin.profile');
+    Route::post('/admin-profile', 'ProfileController@store')->name('admin.profile.store');
 });
 // Doctor Routes
 Route::group(['middleware' => ['auth', 'doctor']], function () {
@@ -60,4 +63,7 @@ Route::group(['middleware' => ['auth', 'doctor']], function () {
     Route::post('prescription', 'PrescriptionController@store')->name('prescription');
     Route::get('/prescription/{userId}/{date}', 'PrescriptionController@show')->name('prescription.show');
     Route::get('/all-prescriptions', 'PrescriptionController@showAllPrescriptions')->name('all.prescriptions');
+
+    Route::get('/dcotor-profile', 'ProfileController@index')->name('doctor.profile');
+    Route::post('/dcotor-profile', 'ProfileController@store')->name('doctor.profile.store');
 });

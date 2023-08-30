@@ -17,3 +17,7 @@ function hasPrescription($doctorId, $userId, $date)
         ->where('user_id', $userId)
         ->exists();
 }
+
+function getLogo(){
+    return asset('images/logo.png');
+}
