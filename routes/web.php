@@ -39,7 +39,7 @@ Route::group(['middleware' => ['auth', 'patient']], function () {
     Route::post('/user-profile', 'ProfileController@store')->name('profile.store');
     Route::post('/profile-pic', 'ProfileController@profilePic')->name('profile.pic');
 
-    Route::post('/book/appointment', 'FrontEndController@store')->name('book.appointment');
+    Route::post('/book/appointment', [FrontEndController::class, 'store'])->name('book.appointment');
     Route::get('/my-booking', 'FrontEndController@myBookings')->name('my.booking');
     Route::get('/my-prescription', 'FrontEndController@myPrescription')->name('my.prescription');
 });

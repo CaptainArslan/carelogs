@@ -7,7 +7,9 @@ use App\Models\Time;
 use App\Models\User;
 use App\Models\Booking;
 use App\Models\Appointment;
+use Illuminate\Support\Str;
 use App\Models\Prescription;
+use App\Notifications\BookingMadeNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -55,10 +57,9 @@ class FrontEndController extends Controller
     public function store(Request $request)
     {
         // Set timezone
-        date_default_timezone_set('America/New_York');
-
         $request->validate(['time' => 'required']);
         $check = $this->checkBookingTimeInterval();
+
         if ($check) {
             return redirect()->back()->with('errMessage', 'You already made an appointment. Please check your email for the appointment!');
         }
@@ -68,11 +69,12 @@ class FrontEndController extends Controller
         $appointmentId = $request->appointmentId;
         $date = $request->date;
         Booking::create([
+            'id' => Str::uuid()->toString(),
             'user_id' => auth()->user()->id,
             'doctor_id' => $doctorId,
             'time' => $time,
             'date' => $date,
-            'status' => 0
+            'status' => 1
         ]);
         $doctor = User::where('id', $doctorId)->first();
         Time::where('appointment_id', $appointmentId)->where('time', $time)->update(['status' => 1]);
@@ -84,6 +86,11 @@ class FrontEndController extends Controller
             'date' => $date,
             'doctorName' => $doctor->name
         ];
+
+        $user = Auth::user();
+
+        $user->notify(new BookingMadeNotification());
+
         try {
             // Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
         } catch (\Exception $e) {
@@ -146,7 +153,7 @@ class FrontEndController extends Controller
     {
         return Booking::orderby('id', 'desc')
             ->where('user_id', auth()->user()->id)
-            ->whereDate('created_at', date('y-m-d'))
+            ->whereDate('created_at', date('m-d-Y'))
             ->exists();
     }
 

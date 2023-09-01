@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,6 +19,7 @@ class BookingFactory extends Factory
     {
         $startDate = Carbon::now()->addDays($this->faker->numberBetween(0, 2));
         return [
+            'id' => Str::uuid()->toString(),
             'user_id' => User::where('role_id', Role::PATIENT)->get()->random()->id,
             'doctor_id' =>  User::where('role_id', Role::DOCTOR)->get()->random()->id,
             'time' =>  getRandomTime(),
