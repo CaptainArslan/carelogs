@@ -10,12 +10,19 @@ use App\Models\Appointment;
 use Illuminate\Support\Str;
 use App\Models\Prescription;
 use App\Notifications\BookingMadeNotification;
+use App\Traits\ZoomMeetingTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class FrontEndController extends Controller
 {
+    use ZoomMeetingTrait;
+
+    const MEETING_TYPE_INSTANT = 1;
+    const MEETING_TYPE_SCHEDULE = 2;
+    const MEETING_TYPE_RECURRING = 3;
+    const MEETING_TYPE_FIXED_RECURRING_FIXED = 8;
     /**
      * Display a listing of the resource.
      *
@@ -57,46 +64,51 @@ class FrontEndController extends Controller
     public function store(Request $request)
     {
         // Set timezone
-        $request->validate(['time' => 'required']);
-        $check = $this->checkBookingTimeInterval();
+        // $request->validate(['time' => 'required']);
+        // $check = $this->checkBookingTimeInterval();
 
-        if ($check) {
-            return redirect()->back()->with('errMessage', 'You already made an appointment. Please check your email for the appointment!');
-        }
+        // if ($check) {
+        //     return redirect()->back()->with('errMessage', 'You already made an appointment. Please check your email for the appointment!');
+        // }
 
-        $doctorId = $request->doctorId;
-        $time = $request->time;
-        $appointmentId = $request->appointmentId;
-        $date = $request->date;
-        Booking::create([
-            'id' => Str::uuid()->toString(),
-            'user_id' => auth()->user()->id,
-            'doctor_id' => $doctorId,
-            'time' => $time,
-            'date' => $date,
-            'status' => 1
-        ]);
-        $doctor = User::where('id', $doctorId)->first();
-        Time::where('appointment_id', $appointmentId)->where('time', $time)->update(['status' => 1]);
+        // $doctorId = $request->doctorId;
+        // $time = $request->time;
+        // $appointmentId = $request->appointmentId;
+        // $date = $request->date;
+        // Booking::create([
+        //     'id' => Str::uuid()->toString(),
+        //     'user_id' => auth()->user()->id,
+        //     'doctor_id' => $doctorId,
+        //     'time' => $time,
+        //     'date' => $date,
+        //     'status' => 1
+        // ]);
+        // $doctor = User::where('id', $doctorId)->first();
+        // Time::where('appointment_id', $appointmentId)->where('time', $time)->update(['status' => 1]);
 
-        // Send email notification
-        $mailData = [
-            'name' => auth()->user()->name,
-            'time' => $time,
-            'date' => $date,
-            'doctorName' => $doctor->name
-        ];
+        // // Send email notification
+        // $mailData = [
+        //     'name' => auth()->user()->name,
+        //     'time' => $time,
+        //     'date' => $date,
+        //     'doctorName' => $doctor->name
+        // ];
 
-        $user = Auth::user();
+        $type = self::MEETING_TYPE_SCHEDULE;
+        $time = now()->addMinutes(5)->format('Y-m-d\TH:i:s');
+        $meeting = createScheduledMeeting($time, $type);
+        dd($meeting);
 
-        $user->notify(new BookingMadeNotification());
+        // $user = Auth::user();
 
-        try {
-            // Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
-        } catch (\Exception $e) {
-        }
+        // $user->notify(new BookingMadeNotification());
 
-        return redirect()->back()->with('message', 'Your appointment was booked for ' . $date . ' at ' . $time . ' with ' . $doctor->name . '.');
+        // try {
+        //     // Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
+        // } catch (\Exception $e) {
+        // }
+
+        // return redirect()->back()->with('message', 'Your appointment was booked for ' . $date . ' at ' . $time . ' with ' . $doctor->name . '.');
     }
 
     /**
