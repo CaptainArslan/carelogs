@@ -9,15 +9,15 @@ use App\Models\Booking;
 use App\Models\Appointment;
 use Illuminate\Support\Str;
 use App\Models\Prescription;
-use App\Notifications\BookingMadeNotification;
-use App\Traits\ZoomMeetingTrait;
 use Illuminate\Http\Request;
+use Jubaer\Zoom\Facades\Zoom;
+use App\Traits\ZoomMeetingTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Notifications\BookingMadeNotification;
 
 class FrontEndController extends Controller
 {
-    use ZoomMeetingTrait;
 
     const MEETING_TYPE_INSTANT = 1;
     const MEETING_TYPE_SCHEDULE = 2;
@@ -64,17 +64,17 @@ class FrontEndController extends Controller
     public function store(Request $request)
     {
         // Set timezone
-        // $request->validate(['time' => 'required']);
-        // $check = $this->checkBookingTimeInterval();
+        $request->validate(['time' => 'required']);
+        $check = $this->checkBookingTimeInterval();
 
-        // if ($check) {
-        //     return redirect()->back()->with('errMessage', 'You already made an appointment. Please check your email for the appointment!');
-        // }
+        if ($check) {
+            return redirect()->back()->with('errMessage', 'You already made an appointment. Please check your email for the appointment!');
+        }
 
-        // $doctorId = $request->doctorId;
-        // $time = $request->time;
-        // $appointmentId = $request->appointmentId;
-        // $date = $request->date;
+        $doctorId = $request->doctorId;
+        $time = $request->time;
+        $appointmentId = $request->appointmentId;
+        $date = $request->date;
         // Booking::create([
         //     'id' => Str::uuid()->toString(),
         //     'user_id' => auth()->user()->id,
@@ -94,21 +94,47 @@ class FrontEndController extends Controller
         //     'doctorName' => $doctor->name
         // ];
 
-        $type = self::MEETING_TYPE_SCHEDULE;
-        $time = now()->addMinutes(5)->format('Y-m-d\TH:i:s');
-        $meeting = createScheduledMeeting($time, $type);
-        dd($meeting);
+        $meetings = Zoom::createMeeting([
+            "agenda" => 'Doctor Appointment',
+            "topic" => 'Dcoitor Appointment',
+            "type" => self::MEETING_TYPE_SCHEDULE, // 1 => instant, 2 => scheduled, 3 => recurring with no fixed time, 8 => recurring with fixed time
+            "duration" => 30, // in minutes
+            "timezone" => 'Asia/Karachi', // set your timezone
+            "password" => '12345678',
+            "start_time" => 'set your start time', // set your start time
+            "template_id" => 'set your template id', // set your template id  Ex: "Dv4YdINdTk+Z5RToadh5ug==" from https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingtemplates
+            "pre_schedule" => false,  // set true if you want to create a pre-scheduled meeting
+            "schedule_for" => 'set your schedule for profile email ', // set your schedule for
+            "settings" => [
+                'join_before_host' => false, // if you want to join before host set true otherwise set false
+                'host_video' => false, // if you want to start video when host join set true otherwise set false
+                'participant_video' => false, // if you want to start video when participants join set true otherwise set false
+                'mute_upon_entry' => false, // if you want to mute participants when they join the meeting set true otherwise set false
+                'waiting_room' => false, // if you want to use waiting room for participants set true otherwise set false
+                'audio' => 'both', // values are 'both', 'telephony', 'voip'. default is both.
+                'auto_recording' => 'none', // values are 'none', 'local', 'cloud'. default is none.
+                'approval_type' => 2, // 0 => Automatically Approve, 1 => Manually Approve, 2 => No Registration Required
+            ],
+        ]);
+
+        dd($meetings);
+
+
+        // $type = self::MEETING_TYPE_SCHEDULE;
+        // $time = now()->addMinutes(5)->format('Y-m-d\TH:i:s');
+        // $meeting = createScheduledMeeting($time, $type);
+        // dd($meeting);
 
         // $user = Auth::user();
 
         // $user->notify(new BookingMadeNotification());
 
-        // try {
-        //     // Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
-        // } catch (\Exception $e) {
-        // }
+        try {
+            // Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
+        } catch (\Exception $e) {
+        }
 
-        // return redirect()->back()->with('message', 'Your appointment was booked for ' . $date . ' at ' . $time . ' with ' . $doctor->name . '.');
+        return redirect()->back()->with('message', 'Your appointment was booked for ' . $date . ' at ' . $time . ' with ' . $doctor->name . '.');
     }
 
     /**

@@ -39,6 +39,17 @@ class UserSeeder extends Seeder
                 'status' => User::ACTIVE,
             ],
         );
+        User::create(
+            [
+                "name" => 'Arslan',
+                "email" => 'mughalarslan996@gmail.com',
+                "email_verified_at" => now(),
+                'password' => Hash::make('12345678'),
+                'role_id' => Role::PATIENT,
+                'gender' => 'male',
+                'status' => User::ACTIVE,
+            ],
+        );
 
         User::factory(30)->create();
     }

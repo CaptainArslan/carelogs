@@ -99,23 +99,19 @@ function createScheduledMeeting($time, $type)
         'duration' => 60, // Duration in minutes
         'timezone' => 'Asia/Karachi', // Set your desired timezone
     ];
-
-
-
+    $token = getZoomToken(env('ZOOM_ACCOUNT_ID'));
+    dd($token);
 
     // Send a POST request to create the meeting
     $response = Http::withHeaders([
-        'Authorization' => 'Bearer ' . generateZoomToken(),
+        'Authorization' => 'Bearer ' . $token,
         'Content-Type' => 'application/json',
     ])->post("https://api.zoom.us/v2/users/me/meetings", $data);
-
-
-
-    dd($response->json());
 
     // Check for a successful response
     if ($response->successful()) {
         $meetingData = $response->json();
+
 
         // Extract the meeting ID and join URL from $meetingData
         $meetingId = $meetingData['id'];
@@ -127,5 +123,39 @@ function createScheduledMeeting($time, $type)
     } else {
         // Handle the case where the meeting creation was not successful
         return 'Failed to create the meeting: ' . $response->status();
+    }
+}
+
+function getZoomToken($accountID)
+{
+    // Replace these with your actual Zoom API credentials
+    $clientId = env('ZOOM_CLIENT_ID');
+    $clientSecret = env('ZOOM_CLIENT_SECRET');
+
+    // Base64 encode the client ID and client secret
+    $base64Credentials = base64_encode($clientId . ':' . $clientSecret);
+
+    // Define the request data
+    $requestData = [
+        'grant_type' => 'account_credentials',
+        'account_id' => $accountID,
+    ];
+
+    // Make the HTTP POST request to Zoom API
+    $response = Http::withHeaders([
+        'Host' => 'zoom.us',
+        'Authorization' => 'Basic ' . $base64Credentials,
+        'Content-Type' => ' application/x-www-form-urlencoded',
+    ])->post('https://zoom.us/oauth/token', $requestData);
+
+    dd($response->json());
+
+    // Check if the request was successful
+    if ($response->successful()) {
+        // Parse and return the response JSON
+        return $response->json();
+    } else {
+        // Handle the error response here
+        return $response->json();
     }
 }
