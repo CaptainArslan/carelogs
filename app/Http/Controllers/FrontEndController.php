@@ -75,49 +75,49 @@ class FrontEndController extends Controller
         $time = $request->time;
         $appointmentId = $request->appointmentId;
         $date = $request->date;
-        // Booking::create([
-        //     'id' => Str::uuid()->toString(),
-        //     'user_id' => auth()->user()->id,
-        //     'doctor_id' => $doctorId,
-        //     'time' => $time,
-        //     'date' => $date,
-        //     'status' => 1
-        // ]);
-        // $doctor = User::where('id', $doctorId)->first();
-        // Time::where('appointment_id', $appointmentId)->where('time', $time)->update(['status' => 1]);
-
-        // // Send email notification
-        // $mailData = [
-        //     'name' => auth()->user()->name,
-        //     'time' => $time,
-        //     'date' => $date,
-        //     'doctorName' => $doctor->name
-        // ];
-
-        $meetings = Zoom::createMeeting([
-            "agenda" => 'Doctor Appointment',
-            "topic" => 'Dcoitor Appointment',
-            "type" => self::MEETING_TYPE_SCHEDULE, // 1 => instant, 2 => scheduled, 3 => recurring with no fixed time, 8 => recurring with fixed time
-            "duration" => 30, // in minutes
-            "timezone" => 'Asia/Karachi', // set your timezone
-            "password" => '12345678',
-            "start_time" => 'set your start time', // set your start time
-            "template_id" => 'set your template id', // set your template id  Ex: "Dv4YdINdTk+Z5RToadh5ug==" from https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingtemplates
-            "pre_schedule" => false,  // set true if you want to create a pre-scheduled meeting
-            "schedule_for" => 'set your schedule for profile email ', // set your schedule for
-            "settings" => [
-                'join_before_host' => false, // if you want to join before host set true otherwise set false
-                'host_video' => false, // if you want to start video when host join set true otherwise set false
-                'participant_video' => false, // if you want to start video when participants join set true otherwise set false
-                'mute_upon_entry' => false, // if you want to mute participants when they join the meeting set true otherwise set false
-                'waiting_room' => false, // if you want to use waiting room for participants set true otherwise set false
-                'audio' => 'both', // values are 'both', 'telephony', 'voip'. default is both.
-                'auto_recording' => 'none', // values are 'none', 'local', 'cloud'. default is none.
-                'approval_type' => 2, // 0 => Automatically Approve, 1 => Manually Approve, 2 => No Registration Required
-            ],
+        Booking::create([
+            'id' => Str::uuid()->toString(),
+            'user_id' => auth()->user()->id,
+            'doctor_id' => $doctorId,
+            'time' => $time,
+            'date' => $date,
+            'status' => 1
         ]);
+        $doctor = User::where('id', $doctorId)->first();
+        Time::where('appointment_id', $appointmentId)->where('time', $time)->update(['status' => 1]);
 
-        dd($meetings);
+        // Send email notification
+        $mailData = [
+            'name' => auth()->user()->name,
+            'time' => $time,
+            'date' => $date,
+            'doctorName' => $doctor->name
+        ];
+
+        // $meetings = Zoom::createMeeting([
+        //     "agenda" => 'Doctor Appointment',
+        //     "topic" => 'Dcoitor Appointment',
+        //     "type" => self::MEETING_TYPE_SCHEDULE, // 1 => instant, 2 => scheduled, 3 => recurring with no fixed time, 8 => recurring with fixed time
+        //     "duration" => 30, // in minutes
+        //     "timezone" => 'Asia/Karachi', // set your timezone
+        //     "password" => '12345678',
+        //     "start_time" => 'set your start time', // set your start time
+        //     "template_id" => 'set your template id', // set your template id  Ex: "Dv4YdINdTk+Z5RToadh5ug==" from https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingtemplates
+        //     "pre_schedule" => false,  // set true if you want to create a pre-scheduled meeting
+        //     "schedule_for" => 'set your schedule for profile email ', // set your schedule for
+        //     "settings" => [
+        //         'join_before_host' => false, // if you want to join before host set true otherwise set false
+        //         'host_video' => false, // if you want to start video when host join set true otherwise set false
+        //         'participant_video' => false, // if you want to start video when participants join set true otherwise set false
+        //         'mute_upon_entry' => false, // if you want to mute participants when they join the meeting set true otherwise set false
+        //         'waiting_room' => false, // if you want to use waiting room for participants set true otherwise set false
+        //         'audio' => 'both', // values are 'both', 'telephony', 'voip'. default is both.
+        //         'auto_recording' => 'none', // values are 'none', 'local', 'cloud'. default is none.
+        //         'approval_type' => 2, // 0 => Automatically Approve, 1 => Manually Approve, 2 => No Registration Required
+        //     ],
+        // ]);
+
+        // dd($meetings);
 
 
         // $type = self::MEETING_TYPE_SCHEDULE;

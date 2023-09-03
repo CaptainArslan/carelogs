@@ -27,7 +27,7 @@ use App\Http\Controllers\PrescriptionController;
 // });
 Route::get('/', [FrontEndController::class, 'index'])->name('home');
 Route::get('/doctors', [FrontEndController::class, 'doctor'])->name('frontend.doctor');
-Route::get('/new-appointment/{doctorId}/{date}', [FrontEndController::class, 'show'])->name('create.appointment');
+Route::get('/new-appointment/{id}/{date}', [FrontEndController::class, 'show'])->name('create.appointment');
 Auth::routes();
 Route::get('/dashboard', [DashBoardController::class, 'index'])->name('dashboard');
 Route::get('/home', [HomeController::class, 'index'])->name('frontend.home');
@@ -59,7 +59,7 @@ Route::group(['middleware' => ['auth', 'doctor']], function () {
     Route::resource('appointment', 'AppointmentController');
     Route::post('/appointment/check', 'AppointmentController@check')->name('appointment.check');
     Route::post('/appointment/update', 'AppointmentController@updateTime')->name('update');
-    Route::get('patient-today', 'PrescriptionController@index')->name('patient.today');
+    Route::get('patient-today', [PrescriptionController::class, 'index'])->name('patient.today');
     Route::post('prescription', 'PrescriptionController@store')->name('prescription');
     Route::get('/prescription/{userId}/{date}', 'PrescriptionController@show')->name('prescription.show');
     Route::get('/all-prescriptions', 'PrescriptionController@showAllPrescriptions')->name('all.prescriptions');

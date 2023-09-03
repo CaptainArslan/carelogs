@@ -28,6 +28,11 @@ function getLogo()
     return asset('images/logo.png');
 }
 
+function getPlaceholderImage()
+{
+    return asset('images/placeholder.jpg');
+}
+
 
 if (!function_exists('generate_jwt_token')) {
     /**
@@ -158,4 +163,37 @@ function getZoomToken($accountID)
         // Handle the error response here
         return $response->json();
     }
+}
+
+function formatTime($time)
+{
+    return date('H:i:s', strtotime($time));
+}
+
+function uploadImage($image, $folderName, $defaultName = null)
+{
+    // Check if the image is valid
+    if (!$image->isValid()) {
+        throw new \Exception('Invalid image.');
+    }
+
+    $extension = $image->getClientOriginalExtension();
+
+    // Generate a unique filename for the image
+    $filename = uniqid() . '_' . time()  . '_' . $defaultName . '.' . $extension;
+
+    if (!is_dir(public_path('uploads/' . $folderName))) {
+        // create the directory if it does not exist
+        mkdir(public_path('uploads/' . $folderName), 0777, true);
+    }
+
+    // Upload the image to the specified folder
+    try {
+        $image->move(public_path('uploads/' . $folderName), $filename);
+    } catch (\Exception $e) {
+        throw new \Exception('Error uploading image: ' . $e->getMessage());
+    }
+
+    // Return the filename so it can be saved to a database or used in a view
+    return $filename;
 }

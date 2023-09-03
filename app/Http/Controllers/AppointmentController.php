@@ -128,6 +128,6 @@ class AppointmentController extends Controller
                 'status' => 0
             ]);
         }
-        return redirect()->route('appointment.index')->with('message', 'Appointment time for ' . $date . ' is updated successfully!');
+        return redirect()->route('appointment.index')->with('errMessage', 'Appointment time for ' . $date . ' is updated successfully!');
     }
 }

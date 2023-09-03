@@ -9,9 +9,26 @@
                 {{ Session::get('message') }}
             </div>
             @endif
+            @if (Session::has('errMessage'))
+            <div class="alert alert-danger">
+                {{ Session::get('errMessage') }}
+            </div>
+            @endif
             <div class="card">
                 <div class="card-header">
-                    Total Patients: {{ $bookings->count() }}
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-6">
+                                Total Patients: {{ $bookings->count() }}
+                            </div>
+                            <div class="col-6">
+                                <form action="{{ route('patient.today') }}" method="GET" id="form">
+                                    <input type="date" class="form-control" name="date" value="{{ request()->date }}" onchange="formSubmit()" autocomplete="off">
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
                 <div class="card-body table-responsive-lg">
                     <table class="table table-striped">
@@ -34,7 +51,12 @@
                             @forelse($bookings as $key=>$booking)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td><img src="profile/{{ $booking->user->image }}" width="80">
+                                <td><img src="@if ($booking->user->image)
+                                    {{ $booking->user->image }}
+                                    
+                                @else
+                                    {{ getPlaceholderImage() }}
+                                @endif" width="80">
                                 </td>
                                 <td>{{ $booking->date }}</td>
                                 <td>{{ $booking->user->name }}</td>
@@ -78,5 +100,11 @@
 </div>
 {{-- MODAL FORM --}}
 @include('prescription.form')
+
+<script>
+    function formSubmit() {
+        document.getElementById('form').submit();
+    }
+</script>
 
 @endsection

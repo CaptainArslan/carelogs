@@ -14,7 +14,7 @@
         <div class="row">
 
             @if (!Auth::user())
-            <h5 class="text-danger text-center"> Please Login for to make booking </h5>
+            <h4 class="text-danger text-center"> Please Sign Up / Login for to make Appointment or Booking </h4>
             @endif
 
             <div class="col-md-12 col-sm-6">
@@ -24,7 +24,7 @@
                     </div>
                     <div class="col-md-12 col-sm-6">
                         <form action="{{ route('frontend.doctor') }}" method="GET" id="form">
-                            <input type="date" name="date" value="{{ old('date') }}" class="form-control" onchange="formSubmit()">
+                            <input type="date" name="date" value="{{ request()->date }}" class="form-control" onchange="formSubmit()">
                         </form>
                     </div>
 

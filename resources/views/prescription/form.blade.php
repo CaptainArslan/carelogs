@@ -3,7 +3,7 @@
     <div class="modal fade" id="exampleModal{{ $booking->user_id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <form action="{{ route('prescription') }}" method="post">@csrf
+            <form action="{{ route('prescription') }}" method="post" enctype="multipart/form-data">@csrf
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Prescription</h5>
@@ -43,6 +43,10 @@
                         <div class="form-group">
                             <label>Signature</label>
                             <input type="text" name="signature" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Reports / Prescription</label>
+                            <input type="file" name="report" accept="*" class="form-control" required multiple>
                         </div>
 
 
