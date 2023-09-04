@@ -31,8 +31,9 @@ class PrescriptionController extends Controller
     public function store(Request $request)
     {
         // Validate uploaded files
-        $request->validate([
-            'prescription.*' => 'file|max:2048' // Validation rules for any file type
+        $request->validate(['prescription.*' => ['nullable', 'file', 'max:2048'] // Validation rules for any file type
+        ],[
+            'prescription.*.max' => 'The prescription file size must not exceed 2MB',
         ]);
 
         try {

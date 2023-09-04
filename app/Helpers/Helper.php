@@ -1,7 +1,6 @@
 <?php
 
 
-use Firebase\JWT\JWT;
 use GuzzleHttp\Client;
 use App\Models\Prescription;
 use Illuminate\Support\Facades\Http;
@@ -31,114 +30,6 @@ function getLogo()
 function getPlaceholderImage()
 {
     return asset('images/placeholder.jpg');
-}
-
-
-function createScheduledMeeting($time, $type)
-{
-    // Prepare the request data
-    $data = [
-        'topic' => 'Booking Appointment',
-        'type' => $type, // Scheduled meeting
-        // 'start_time' => now()->addMinutes(5)->format('Y-m-d\TH:i:s'), // Example: Schedule for 5 minutes from now
-        'start_time' => $time, // Example: Schedule for 5 minutes from now
-        'duration' => 60, // Duration in minutes
-        'timezone' => 'Asia/Karachi', // Set your desired timezone
-    ];
-    $token = getZoomAccessToken(env('ZOOM_ACCOUNT_ID'), env('ZOOM_CLIENT_ID'), env('ZOOM_CLIENT_SECRET'));
-
-    // Send a POST request to create the meeting
-    $response = Http::withHeaders([
-        'Authorization' => 'Bearer ' . $token,
-        'Content-Type' => 'application/json',
-    ])->post("https://api.zoom.us/v2/users/me/meetings", $data);
-
-    dd($response);
-
-    // Check for a successful response
-    if ($response->successful()) {
-        $meetingData = $response->json();
-
-
-        // Extract the meeting ID and join URL from $meetingData
-        $meetingId = $meetingData['id'];
-        $joinUrl = $meetingData['join_url'];
-
-        // You can save the $meetingId and $joinUrl in your database or use them as needed.
-
-        return $meetingData;
-    } else {
-        // Handle the case where the meeting creation was not successful
-        return 'Failed to create the meeting: ' . $response->status();
-    }
-}
-
-// function getZoomToken($accountID)
-// {
-//     // Replace these with your actual Zoom API credentials
-//     $clientId = env('ZOOM_CLIENT_ID');
-//     $clientSecret = env('ZOOM_CLIENT_SECRET');
-
-//     // Base64 encode the client ID and client secret
-//     $base64Credentials = base64_encode($clientId . ':' . $clientSecret);
-
-//     // Define the request data
-//     $requestData = [
-//         'grant_type' => 'account_credentials',
-//         'account_id' => $accountID,
-//     ];
-
-//     // Make the HTTP POST request to Zoom API
-//     $response = Http::withHeaders([
-//         'Host' => 'zoom.us',
-//         'Authorization' => 'Basic ' . $base64Credentials,
-//         'Content-Type' => ' application/json',
-//     ])->post('https://zoom.us/oauth/token', $requestData);
-
-//     dd($response->json());
-
-//     // Check if the request was successful
-//     if ($response->successful()) {
-//         // Parse and return the response JSON
-//         return $response->json();
-//     } else {
-//         // Handle the error response here
-//         return $response->json();
-//     }
-// }
-
-
-function getZoomAccessToken($accountID, $clientId, $clientSecret)
-{
-    $ch = curl_init();
-
-    $url = 'https://zoom.us/oauth/token';
-    $data = [
-        'grant_type' => 'account_credentials',
-        'account_id' => $accountID,
-    ];
-
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
-
-    $headers = array(
-        'Host: zoom.us',
-        'Authorization: Basic ' . base64_encode("$clientId:$clientSecret"),
-        'Content-Type: application/x-www-form-urlencoded',
-    );
-
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-    $result = curl_exec($ch);
-    if (curl_errno($ch)) {
-        echo 'Error: ' . curl_error($ch);
-    }
-
-    curl_close($ch);
-
-    return $result;
 }
 
 function formatTime($time)
@@ -173,3 +64,112 @@ function uploadImage($image, $folderName, $defaultName = null)
     // Return the filename so it can be saved to a database or used in a view
     return $filename;
 }
+
+function getZoomAccessToken($accountID, $clientId, $clientSecret)
+{
+    $ch = curl_init();
+
+    $url = 'https://zoom.us/oauth/token';
+    $data = [
+        'grant_type' => 'account_credentials',
+        'account_id' => $accountID,
+    ];
+
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+
+    $headers = array(
+        'Host: zoom.us',
+        'Authorization: Basic ' . base64_encode("$clientId:$clientSecret"),
+        'Content-Type: application/x-www-form-urlencoded',
+    );
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    $result = curl_exec($ch);
+    if (curl_errno($ch)) {
+        echo 'Error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+
+    return $result;
+}
+
+
+function createZoomMeeting($accessToken, $meetingSettings)
+{
+    // Define the API endpoint for creating a meeting
+    $apiEndpoint = 'https://api.zoom.us/v2/users/me/meetings';
+
+    // Define the headers for the request
+    $headers = [
+        'Authorization' => 'Bearer ' . $accessToken,
+        'Content-Type' => 'application/json',
+    ];
+
+    // Prepare the request payload as JSON
+    $jsonData = json_encode($meetingSettings);
+
+    // Make the API request to create the meeting
+    $response = Http::withHeaders($headers)->withBody(
+        $jsonData,
+        'application/json'
+    )->post($apiEndpoint);
+
+    // Check for a successful response (status code 201)
+    if ($response->successful()) {
+        return $response->json();
+    } else {
+        // Handle error cases
+        return ['error' => $response->json()];
+    }
+}
+
+
+// function createZoomMeeting($accessToken, $meetingSettings)
+// {
+//     // API endpoint for creating a meeting
+//     $apiEndpoint = 'https://api.zoom.us/v2/users/me/meetings';
+
+//     // Prepare the request payload as JSON
+//     $jsonData = json_encode($meetingSettings);
+
+//     // Initialize cURL session
+//     $ch = curl_init($apiEndpoint);
+
+//     // Set cURL options
+//     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+//     curl_setopt($ch, CURLOPT_HTTPHEADER, [
+//         'Authorization: Bearer ' . $accessToken,
+//         'Content-Type: application/json',
+//     ]);
+//     curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+//     // Execute the cURL request
+//     $response = curl_exec($ch);
+
+//     // Check for cURL errors
+//     if (curl_errno($ch)) {
+//         return ['error' => 'cURL Error: ' . curl_error($ch)];
+//     }
+
+//     // Get the HTTP response code
+//     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+//     // Close the cURL session
+//     curl_close($ch);
+
+//     // Check for a successful response (HTTP status code 201)
+//     if ($httpCode == 201) {
+//         $responseData = json_decode($response, true);
+//         return $responseData;
+//     } else {
+//         // Handle error cases
+//         $errorResponse = json_decode($response, true);
+//         return ['error' => $errorResponse];
+//     }
+// }

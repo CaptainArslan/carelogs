@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             AppointmentSeeder::class,
             TimeSeeder::class,
             BookingSeeder::class,
+            DiseaseSeeder::class,
         ]);
     }
 }

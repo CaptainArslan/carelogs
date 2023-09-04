@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Disease;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -52,6 +51,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
         // return $this->hasOne(Role::class,);
+    }
+
+    public function diseases()
+    {
+        return $this->belongsToMany(Disease::class, 'user_diseases', 'user_id', 'disease_id', 'id', 'id');
     }
 
     public function userAvatar($request)

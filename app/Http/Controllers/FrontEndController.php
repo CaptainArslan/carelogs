@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Mail\Booking as MailBooking;
 use App\Models\Time;
 use App\Models\User;
 use App\Models\Booking;
@@ -15,6 +15,7 @@ use App\Traits\ZoomMeetingTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\BookingMadeNotification;
+use Illuminate\Support\Facades\Log;
 
 class FrontEndController extends Controller
 {
@@ -32,17 +33,6 @@ class FrontEndController extends Controller
     {
         $doctors = User::activeDoctors()->latest()->take(3)->get();
         return view('frontend.index', get_defined_vars());
-        // Set timezone
-        // date_default_timezone_set('America/New_York');
-        // // If there is set date, find the doctors
-        // if (request('date')) {
-        //     $formatDate = date('m-d-yy', strtotime(request('date')));
-        //     $doctors = Appointment::where('date', $formatDate)->get();
-        //     return view('welcome', compact('doctors', 'formatDate'));
-        // };
-        // // Return all doctors avalable for today to the welcome page
-        // $doctors = Appointment::where('date', date('m-d-yy'))->get();
-        // return view('welcome', compact('doctors'));
     }
 
     /**
@@ -63,11 +53,7 @@ class FrontEndController extends Controller
      */
     public function store(Request $request)
     {
-
-        $time = now()->addMinutes(5)->format('Y-m-d\TH:i:s');
-        $meeting =createScheduledMeeting($time, self::MEETING_TYPE_SCHEDULE);
-        
-        dd($meeting);
+        Auth::user()->name;
         // Set timezone
         $request->validate(['time' => 'required']);
         $check = $this->checkBookingTimeInterval();
@@ -80,64 +66,42 @@ class FrontEndController extends Controller
         $time = $request->time;
         $appointmentId = $request->appointmentId;
         $date = $request->date;
-        Booking::create([
-            'id' => Str::uuid()->toString(),
-            'user_id' => auth()->user()->id,
-            'doctor_id' => $doctorId,
-            'time' => $time,
-            'date' => $date,
-            'status' => 1
-        ]);
+
+        $startTime = date("Y-m-d H:i:s", strtotime($request->date . ' ' . $request->time));
+        $meeting = $this->createZoom($startTime);
+        Log::info($meeting);
+
+        $booking = new Booking();
+        // $booking->id = Str::uuid()->toString();
+        $booking->user_id = auth()->user()->id;
+        $booking->doctor_id = $doctorId;
+        $booking->time = $time;
+        $booking->date = $date;
+        $booking->status = 1;
+        $booking->meeting_details = json_encode($meeting);
+        $booking->save();
+
         $doctor = User::where('id', $doctorId)->first();
         Time::where('appointment_id', $appointmentId)->where('time', $time)->update(['status' => 1]);
 
-        
-        // Send email notification
-        $mailData = [
+        // $booking->update(['meeting_details' => json_encode($meeting)]);
+        $bookingData = [
             'name' => auth()->user()->name,
             'time' => $time,
             'date' => $date,
-            'doctorName' => $doctor->name
+            'doctorName' => $doctor->name,
+            'doctorEmail' => $doctor->email,
+            'doctorPhone' => $doctor->phone,
+            'meetingId' => $meeting['id'],
+            'zoomLink' => $meeting['join_url'],
+            'zoomPassword' => $meeting['password'],
         ];
-
-        // $meetings = Zoom::createMeeting([
-        //     "agenda" => 'Doctor Appointment',
-        //     "topic" => 'Dcoitor Appointment',
-        //     "type" => self::MEETING_TYPE_SCHEDULE, // 1 => instant, 2 => scheduled, 3 => recurring with no fixed time, 8 => recurring with fixed time
-        //     "duration" => 30, // in minutes
-        //     "timezone" => 'Asia/Karachi', // set your timezone
-        //     "password" => '12345678',
-        //     "start_time" => 'set your start time', // set your start time
-        //     "template_id" => 'set your template id', // set your template id  Ex: "Dv4YdINdTk+Z5RToadh5ug==" from https://marketplace.zoom.us/docs/api-reference/zoom-api/meetings/meetingtemplates
-        //     "pre_schedule" => false,  // set true if you want to create a pre-scheduled meeting
-        //     "schedule_for" => 'set your schedule for profile email ', // set your schedule for
-        //     "settings" => [
-        //         'join_before_host' => false, // if you want to join before host set true otherwise set false
-        //         'host_video' => false, // if you want to start video when host join set true otherwise set false
-        //         'participant_video' => false, // if you want to start video when participants join set true otherwise set false
-        //         'mute_upon_entry' => false, // if you want to mute participants when they join the meeting set true otherwise set false
-        //         'waiting_room' => false, // if you want to use waiting room for participants set true otherwise set false
-        //         'audio' => 'both', // values are 'both', 'telephony', 'voip'. default is both.
-        //         'auto_recording' => 'none', // values are 'none', 'local', 'cloud'. default is none.
-        //         'approval_type' => 2, // 0 => Automatically Approve, 1 => Manually Approve, 2 => No Registration Required
-        //     ],
-        // ]);
-
-        // dd($meetings);
-
-
-        // $type = self::MEETING_TYPE_SCHEDULE;
-        // $time = now()->addMinutes(5)->format('Y-m-d\TH:i:s');
-        // $meeting = createScheduledMeeting($time, $type);
-        // dd($meeting);
-
-        // $user = Auth::user();
-
-        // $user->notify(new BookingMadeNotification());
+        Log::info($bookingData);
 
         try {
-            // Mail::to(auth()->user()->email)->send(new AppointmentMail($mailData));
+            Mail::to(Auth::user()->email)->send(new MailBooking($bookingData));
         } catch (\Exception $e) {
+            return redirect()->back()->with('errMessage', 'Booking confome but email not sent! <br>' . $e->getMessage());
         }
 
         return redirect()->back()->with('message', 'Your appointment was booked for ' . $date . ' at ' . $time . ' with ' . $doctor->name . '.');
@@ -226,5 +190,36 @@ class FrontEndController extends Controller
             $appointments = Appointment::where('date', $formatDate)->get();
         };
         return view('frontend.doctor', get_defined_vars());
+    }
+
+    function createZoom($startTime)
+    {
+        try {
+            $meetingSettings = [
+                "agenda" => "Doctor Appointment",
+                "topic" => "Doctor Appointment",
+                "type" => 2, // 1 => instant, 2 => scheduled, 3 => recurring with no fixed time, 8 => recurring with fixed time
+                "duration" => 20, // in minutes
+                "timezone" => "Asia/Karachi",
+                "password" => Str::random(8),
+                "start_time" => $startTime, // set your start time
+                "settings" => [
+                    "join_before_host" => false, // if you want to join before host set true otherwise set false
+                    "host_video" => false, // if you want to start video when host join set true otherwise set false
+                    "participant_video" => false, // if you want to start video when participants join set true otherwise set false
+                    "mute_upon_entry" => false, // if you want to mute participants when they join the meeting set true otherwise set false
+                    "waiting_room" => false, // if you want to use waiting room for participants set true otherwise set false
+                    "audio" => "both", // values are 'both', 'telephony', 'voip'. default is both.
+                    "auto_recording" => "none", // values are 'none', 'local', 'cloud'. default is none.
+                    "approval_type" => 2 // 0 => Automatically Approve, 1 => Manually Approve, 2 => No Registration Required
+                ]
+            ];
+            $accessTokenResponse = getZoomAccessToken(env('ZOOM_ACCOUNT_ID'), env('ZOOM_CLIENT_ID'), env('ZOOM_CLIENT_SECRET'));
+            $responseData = json_decode($accessTokenResponse, true);
+            $result = createZoomMeeting($responseData['access_token'], $meetingSettings);
+            return $result;
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }

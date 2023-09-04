@@ -14,15 +14,16 @@ class CreateBookingsTable extends Migration
     public function up()
     {
         Schema::create('bookings', function (Blueprint $table) {
-            $table->uuid('id');
+            $table->id('id');
 
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('doctor_id')->constrained('users')->onDelete('cascade');
             $table->string('time');
             $table->string('date');
+            $table->longText('meeting_details')->nullable();
             $table->integer('status')->default(0);
 
-            $table->timestamps();
+        $table->timestamps();
         });
     }
 
