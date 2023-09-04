@@ -63,6 +63,11 @@ class FrontEndController extends Controller
      */
     public function store(Request $request)
     {
+
+        $time = now()->addMinutes(5)->format('Y-m-d\TH:i:s');
+        $meeting =createScheduledMeeting($time, self::MEETING_TYPE_SCHEDULE);
+        
+        dd($meeting);
         // Set timezone
         $request->validate(['time' => 'required']);
         $check = $this->checkBookingTimeInterval();
@@ -86,6 +91,7 @@ class FrontEndController extends Controller
         $doctor = User::where('id', $doctorId)->first();
         Time::where('appointment_id', $appointmentId)->where('time', $time)->update(['status' => 1]);
 
+        
         // Send email notification
         $mailData = [
             'name' => auth()->user()->name,

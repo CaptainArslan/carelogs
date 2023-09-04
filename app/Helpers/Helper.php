@@ -34,65 +34,6 @@ function getPlaceholderImage()
 }
 
 
-if (!function_exists('generate_jwt_token')) {
-    /**
-     * Generate a JSON Web Token (JWT).
-     *
-     * @param array $payload The data to include in the payload.
-     * @param string $key The secret key used to sign the token.
-     * @param int $expiration The token expiration time in seconds.
-     * @return string The generated JWT token.
-     */
-    function generate_jwt_token($payload,  $key,  $expiration = 3600): string
-    {
-        // Set the token expiration time
-        $payload['exp'] = time() + $expiration;
-
-        // Generate the JWT token using the secret key
-        return JWT::encode($payload, $key, 'HS256');
-    }
-}
-
-function jetToken()
-{
-    $key = env('ZOOM_CLIENT_ID', '');
-    $secret = env('ZOOM_CLIENT_SECRET', '');
-    try {
-        $client = new Client(['base_uri' => 'https://zoom.us']);
-
-        $response = $client->request('POST', '/oauth/token', [
-            "headers" => [
-                "Authorization" => "Basic " . base64_encode($key . ':' . $secret)
-            ],
-            'form_params' => [
-                "grant_type" => "authorization_code",
-                "code" => $_GET['code'],
-                "redirect_uri" => REDIRECT_URI
-            ],
-        ]);
-
-        $token = json_decode($response->getBody()->getContents(), true);
-        return $token;
-        echo "Access token inserted successfully.";
-    } catch (Exception $e) {
-        return $e->getMessage();
-        echo $e->getMessage();
-    }
-}
-
-function generateZoomToken()
-{
-    $key = env('ZOOM_CLIENT_ID', '');
-    $secret = env('ZOOM_CLIENT_SECRET', '');
-
-    $tokenPayload = [
-        'iss' => $key,
-        'exp' => time() + 3600,
-    ];
-
-    return JWT::encode($tokenPayload, $secret, 'HS256');
-}
-
 function createScheduledMeeting($time, $type)
 {
     // Prepare the request data
@@ -104,14 +45,15 @@ function createScheduledMeeting($time, $type)
         'duration' => 60, // Duration in minutes
         'timezone' => 'Asia/Karachi', // Set your desired timezone
     ];
-    $token = getZoomToken(env('ZOOM_ACCOUNT_ID'));
-    dd($token);
+    $token = getZoomAccessToken(env('ZOOM_ACCOUNT_ID'), env('ZOOM_CLIENT_ID'), env('ZOOM_CLIENT_SECRET'));
 
     // Send a POST request to create the meeting
     $response = Http::withHeaders([
         'Authorization' => 'Bearer ' . $token,
         'Content-Type' => 'application/json',
     ])->post("https://api.zoom.us/v2/users/me/meetings", $data);
+
+    dd($response);
 
     // Check for a successful response
     if ($response->successful()) {
@@ -131,38 +73,72 @@ function createScheduledMeeting($time, $type)
     }
 }
 
-function getZoomToken($accountID)
+// function getZoomToken($accountID)
+// {
+//     // Replace these with your actual Zoom API credentials
+//     $clientId = env('ZOOM_CLIENT_ID');
+//     $clientSecret = env('ZOOM_CLIENT_SECRET');
+
+//     // Base64 encode the client ID and client secret
+//     $base64Credentials = base64_encode($clientId . ':' . $clientSecret);
+
+//     // Define the request data
+//     $requestData = [
+//         'grant_type' => 'account_credentials',
+//         'account_id' => $accountID,
+//     ];
+
+//     // Make the HTTP POST request to Zoom API
+//     $response = Http::withHeaders([
+//         'Host' => 'zoom.us',
+//         'Authorization' => 'Basic ' . $base64Credentials,
+//         'Content-Type' => ' application/json',
+//     ])->post('https://zoom.us/oauth/token', $requestData);
+
+//     dd($response->json());
+
+//     // Check if the request was successful
+//     if ($response->successful()) {
+//         // Parse and return the response JSON
+//         return $response->json();
+//     } else {
+//         // Handle the error response here
+//         return $response->json();
+//     }
+// }
+
+
+function getZoomAccessToken($accountID, $clientId, $clientSecret)
 {
-    // Replace these with your actual Zoom API credentials
-    $clientId = env('ZOOM_CLIENT_ID');
-    $clientSecret = env('ZOOM_CLIENT_SECRET');
+    $ch = curl_init();
 
-    // Base64 encode the client ID and client secret
-    $base64Credentials = base64_encode($clientId . ':' . $clientSecret);
-
-    // Define the request data
-    $requestData = [
+    $url = 'https://zoom.us/oauth/token';
+    $data = [
         'grant_type' => 'account_credentials',
         'account_id' => $accountID,
     ];
 
-    // Make the HTTP POST request to Zoom API
-    $response = Http::withHeaders([
-        'Host' => 'zoom.us',
-        'Authorization' => 'Basic ' . $base64Credentials,
-        'Content-Type' => ' application/x-www-form-urlencoded',
-    ])->post('https://zoom.us/oauth/token', $requestData);
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
 
-    dd($response->json());
+    $headers = array(
+        'Host: zoom.us',
+        'Authorization: Basic ' . base64_encode("$clientId:$clientSecret"),
+        'Content-Type: application/x-www-form-urlencoded',
+    );
 
-    // Check if the request was successful
-    if ($response->successful()) {
-        // Parse and return the response JSON
-        return $response->json();
-    } else {
-        // Handle the error response here
-        return $response->json();
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    $result = curl_exec($ch);
+    if (curl_errno($ch)) {
+        echo 'Error: ' . curl_error($ch);
     }
+
+    curl_close($ch);
+
+    return $result;
 }
 
 function formatTime($time)
