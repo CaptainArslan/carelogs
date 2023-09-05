@@ -1,6 +1,6 @@
 @if (count($bookings) > 0)
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal{{ $booking->user_id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+    <div class="modal fade" id="exampleModal{{ $booking->id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <form action="{{ route('prescription') }}" method="post" enctype="multipart/form-data">@csrf
@@ -16,6 +16,7 @@
                         <input type="hidden" name="user_id" value="{{ $booking->user_id }}">
                         <input type="hidden" name="doctor_id" value="{{ $booking->doctor_id }}">
                         <input type="hidden" name="date" value="{{ $booking->date }}">
+                        <input type="hidden" name="booking_id" value="{{ $booking->id }}">
 
                         <div class="form-group">
                             <label>Disease</label>
@@ -46,7 +47,7 @@
                         </div>
                         <div class="form-group">
                             <label>Reports / Prescription</label>
-                            <input type="file" name="report" accept="*" class="form-control" required multiple>
+                            <input type="file" name="attachements[]" accept="*" class="form-control" required multiple>
                         </div>
 
 

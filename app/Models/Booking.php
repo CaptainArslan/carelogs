@@ -22,4 +22,8 @@ class Booking extends Model implements ShouldQueue
     {
         return $this->belongsTo(User::class);
     }
+    public function attachments()
+    {
+        return $this->hasMany(Attachment::class);
+    }
 }

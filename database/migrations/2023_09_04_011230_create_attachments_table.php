@@ -15,9 +15,12 @@ class CreateAttachmentsTable extends Migration
     {
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade'); // patient id
             $table->foreignId('doctor_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('booking_id')->nullable()->constrained('bookings')->onDelete('cascade');
             $table->foreignId('prescription_id')->constrained('prescriptions')->onDelete('cascade');
+            $table->enum('upload_by', ['doctor', 'patient']);
             $table->string('attachment_url');
             $table->timestamps();
         });

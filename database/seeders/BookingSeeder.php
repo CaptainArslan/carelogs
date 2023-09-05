@@ -14,6 +14,6 @@ class BookingSeeder extends Seeder
      */
     public function run()
     {
-        Booking::factory()->count(10)->create();
+        Booking::factory()->count(500)->create();
     }
 }

@@ -31,33 +31,35 @@ class PrescriptionController extends Controller
     public function store(Request $request)
     {
         // Validate uploaded files
-        $request->validate(['prescription.*' => ['nullable', 'file', 'max:2048'] // Validation rules for any file type
-        ],[
-            'prescription.*.max' => 'The prescription file size must not exceed 2MB',
+        $request->validate([
+            'attachements.*' => ['nullable', 'file', 'max:2048'] // Validation rules for any file type
+        ], [
+            'attachements.*.max' => 'Maximum file size to upload is 2MB',
         ]);
 
         try {
-            $data = $request->except('report');
+            $data = $request->except('attachements');
             // Create a new prescription record
             $pres = Prescription::create($data);
             // Handle uploaded files
-            if($request->file('report')){
-                foreach ($request->file('report') as $file) {
-                    $image = uploadImage($file, '/uploads/', 'profile');
-                    // $fileName = time() . '_' . $file->getClientOriginalName();
-                    // $file->storeAs('uploads', $fileName); // Store the file in the "uploads" directory
-    
+            if ($request->file('attachements')) {
+                // dd($request->file('attachements'));
+                foreach ($request->file('attachements') as $file) {
+                    $file_name = uploadImage($file, '', 'report');
                     // Create a new attachment record
                     $attachment = new Attachment();
+                    $attachment->name = $file_name;
                     $attachment->prescription_id = $pres->id;
                     $attachment->doctor_id = Auth::id();
-                    $attachment->url = asset('uploads/' . $image); // Assuming you are using Laravel's storage system
+                    $attachment->booking_id = $request->booking_id;
+                    $attachment->upload_by = 'doctor';
+                    $attachment->attachment_url = asset('uploads/' . $file_name); // Assuming you are using Laravel's storage system
                     $attachment->save();
                 }
-            }else{
+            } else {
                 return redirect()->back()->with('errMessage', 'image uploading');
             }
-            
+
 
             return redirect()->back()->with('message', 'A prescription was created successfully!');
         } catch (\Exception $e) {

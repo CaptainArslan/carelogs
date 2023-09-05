@@ -34,14 +34,13 @@ Route::get('/home', [HomeController::class, 'index'])->name('frontend.home');
 
 // Patient Routes
 Route::group(['middleware' => ['auth', 'patient']], function () {
-    // Profile Routes
     Route::get('/user-profile', 'ProfileController@index')->name('profile');
     Route::post('/user-profile', 'ProfileController@store')->name('profile.store');
     Route::post('/profile-pic', 'ProfileController@profilePic')->name('profile.pic');
-
-    Route::post('/book/appointment', [FrontEndController::class, 'store'])->name('book.appointment');
+    Route::post('/book/appointment', 'FrontEndController@store')->name('book.appointment');
     Route::get('/my-booking', 'FrontEndController@myBookings')->name('my.booking');
     Route::get('/my-prescription', 'FrontEndController@myPrescription')->name('my.prescription');
+    Route::post('prescription/store', 'FrontEndController@reportUpload')->name('prescription.store');
 });
 // Admin Routes
 Route::group(['middleware' => ['auth', 'admin']], function () {
@@ -50,20 +49,14 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/status/update/{id}', 'PatientListController@toggleStatus')->name('update.status');
     Route::get('/all-patients', 'PatientListController@allTimeAppointment')->name('all.appointments');
     Route::resource('/department', 'DepartmentController');
-
-    // Route::get('/admin-profile', 'ProfileController@index')->name('admin.profile');
-    // Route::post('/admin-profile', 'ProfileController@store')->name('admin.profile.store');
 });
 // Doctor Routes
 Route::group(['middleware' => ['auth', 'doctor']], function () {
     Route::resource('appointment', 'AppointmentController');
     Route::post('/appointment/check', 'AppointmentController@check')->name('appointment.check');
     Route::post('/appointment/update', 'AppointmentController@updateTime')->name('update');
-    Route::get('patient-today', [PrescriptionController::class, 'index'])->name('patient.today');
+    Route::get('bookings', 'PrescriptionController@index')->name('booking');
     Route::post('prescription', 'PrescriptionController@store')->name('prescription');
     Route::get('/prescription/{userId}/{date}', 'PrescriptionController@show')->name('prescription.show');
     Route::get('/all-prescriptions', 'PrescriptionController@showAllPrescriptions')->name('all.prescriptions');
-
-    // Route::get('/dcotor-profile', 'ProfileController@index')->name('doctor.profile');
-    // Route::post('/dcotor-profile', 'ProfileController@store')->name('doctor.profile.store');
 });

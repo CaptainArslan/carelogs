@@ -15,7 +15,7 @@
                         <a href="{{ url('dashboard') }}"><i class="ik ik-bar-chart-2"></i><span>Dashboard</span></a>
                     </div>
                     <div class="nav-item has-sub">
-                        <a href="javascript:void(0)"><i class="ik ik-list"></i><span>Appointment Time</span> <span class="badge badge-danger"></span></a>
+                        <a href="javascript:void(0)"><i class="ik ik-list"></i><span>Avaialablitiy Time</span> <span class="badge badge-danger"></span></a>
                         <div class="submenu-content">
                             <a href="{{ route('appointment.create') }}" class="menu-item">Create</a>
                             <a href="{{ route('appointment.index') }}" class="menu-item">Check</a>
@@ -24,12 +24,11 @@
                     <div class="nav-item has-sub">
                         <a href="javascript:void(0)"><i class="ik ik-heart"></i><span>Prescription</span> <span class="badge badge-danger"></span></a>
                         <div class="submenu-content">
-                            <a href="{{ route('patient.today') }}" class="menu-item">Today</a>
-                            <a href="{{ route('all.prescriptions') }}" class="menu-item">All
-                                Prescribed Patients</a>
+                            <a href="{{ route('booking') }}" class="menu-item">Bookings</a>
+                            <a href="{{ route('all.prescriptions') }}" class="menu-item">Prescribed Patients</a>
                         </div>
                     </div>
-                    @if (auth()->user()->role_id == 1)
+                    @if (Auth::user()->role_id == 1)
                     <div class="nav-item has-sub">
                         <a href="javascript:void(0)"><i class="ik ik-layers"></i><span>Department</span> <span class="badge badge-danger"></span></a>
                         <div class="submenu-content">

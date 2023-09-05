@@ -22,15 +22,14 @@
                                 Total Patients: {{ $bookings->count() }}
                             </div>
                             <div class="col-6">
-                                <form action="{{ route('patient.today') }}" method="GET" id="form">
+                                <form action="{{ route('booking') }}" method="GET" id="form">
                                     <input type="date" class="form-control" name="date" value="{{ request()->date }}" onchange="formSubmit()" autocomplete="off">
                                 </form>
                             </div>
                         </div>
-
                     </div>
                 </div>
-                <div class="card-body table-responsive-lg">
+                <div class="card-body table-responsive">
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -43,6 +42,7 @@
                                 <th scope="col">Gender</th>
                                 <th scope="col">Time</th>
                                 <th scope="col">Doctor</th>
+                                <th scope="col">Reports</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Prescription</th>
                             </tr>
@@ -66,6 +66,22 @@
                                 <td>{{ $booking->time }}</td>
                                 <td>{{ $booking->doctor->name }}</td>
                                 <td>
+                                    <ol style="list-style-type: disc">
+                                        @forelse ($booking->attachments as $attachment)
+                                        <li>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-secondary">{{ $attachment->upload_by }}:</span>
+                                                <span class="ml-2">
+                                                    <a href="{{ $attachment->attachment_url }}" target="_blank" class="text-primary" download="{{ $attachment->name }}">{{ $attachment->name }}</a>
+                                                </span>
+                                            </div>
+                                        </li>
+                                        @empty
+                                        <li class="text-danger">No reports uploaded</li>
+                                        @endforelse
+                                    </ol>
+                                </td>
+                                <td>
                                     @if ($booking->status == 0)
                                     <a><button class="btn btn-warning">Pending</button></a>
                                     @else
@@ -77,7 +93,7 @@
                                     $hasPrescription = hasPrescription(date('m-d-Y'), $booking->user->id, $booking->doctor->id);
                                     @endphp
                                     @if (!$hasPrescription)
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{ $booking->user_id }}">
+                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{ $booking->id }}">
                                         Prescribe
                                     </button>
                                     @include('prescription.form')

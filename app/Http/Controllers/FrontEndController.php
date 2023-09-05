@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\Booking as MailBooking;
 use App\Models\Time;
 use App\Models\User;
 use App\Models\Booking;
+use App\Models\Attachment;
 use App\Models\Appointment;
 use Illuminate\Support\Str;
 use App\Models\Prescription;
 use Illuminate\Http\Request;
 use Jubaer\Zoom\Facades\Zoom;
 use App\Traits\ZoomMeetingTrait;
+use Illuminate\Support\Facades\Log;
+use App\Mail\Booking as MailBooking;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\BookingMadeNotification;
-use Illuminate\Support\Facades\Log;
 
 class FrontEndController extends Controller
 {
@@ -220,6 +221,46 @@ class FrontEndController extends Controller
             return $result;
         } catch (\Throwable $th) {
             //throw $th;
+        }
+    }
+
+    public function reportUpload(Request $request)
+    {
+        // Validate uploaded files
+        $request->validate([
+            'attachements.*' => ['nullable', 'file', 'max:2048'], // Validation rules for any file type
+            'prescription_id' => ['required', 'numeric', 'exists:prescriptions,id'] // Validation rules for any file type
+        ], [
+            'attachements.*.max' => 'Maximum file size to upload is 2MB',
+            'prescription_id.required' => 'Prescription ID is required',
+            'prescription_id.numeric' => 'Prescription ID must be a number',
+            'prescription_id.exists' => 'Prescription ID does not exist',
+        ]);
+
+        try {
+            if ($request->file('attachements')) {
+                // dd($request->file('attachements'));
+                foreach ($request->file('attachements') as $file) {
+                    $file_name = uploadImage($file, '', 'report');
+                    // Create a new attachment record
+                    $attachment = new Attachment();
+                    $attachment->name = $file_name;
+                    $attachment->prescription_id = $request->prescription_id;
+                    $attachment->doctor_id = Auth::id();
+                    $attachment->booking_id = $request->booking_id;
+                    $attachment->upload_by = 'patient';
+                    $attachment->attachment_url = asset('uploads/' . $file_name); // Assuming you are using Laravel's storage system
+                    $attachment->save();
+                }
+            } else {
+                return redirect()->back()->with('errMessage', 'image uploading');
+            }
+
+
+            return redirect()->back()->with('message', 'A prescription was created successfully!');
+        } catch (\Exception $e) {
+            // Handle any exceptions that may occur during the process
+            return redirect()->back()->with('errMessage', 'An error occurred while creating the prescription: ' . $e->getMessage());
         }
     }
 }

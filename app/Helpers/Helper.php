@@ -47,7 +47,7 @@ function uploadImage($image, $folderName, $defaultName = null)
     $extension = $image->getClientOriginalExtension();
 
     // Generate a unique filename for the image
-    $filename = uniqid() . '_' . time()  . '_' . $defaultName . '.' . $extension;
+    $filename = time()  . '_' . $defaultName . '.' . $extension;
 
     if (!is_dir(public_path('uploads/' . $folderName))) {
         // create the directory if it does not exist
@@ -98,7 +98,6 @@ function getZoomAccessToken($accountID, $clientId, $clientSecret)
     return $result;
 }
 
-
 function createZoomMeeting($accessToken, $meetingSettings)
 {
     // Define the API endpoint for creating a meeting
@@ -127,49 +126,3 @@ function createZoomMeeting($accessToken, $meetingSettings)
         return ['error' => $response->json()];
     }
 }
-
-
-// function createZoomMeeting($accessToken, $meetingSettings)
-// {
-//     // API endpoint for creating a meeting
-//     $apiEndpoint = 'https://api.zoom.us/v2/users/me/meetings';
-
-//     // Prepare the request payload as JSON
-//     $jsonData = json_encode($meetingSettings);
-
-//     // Initialize cURL session
-//     $ch = curl_init($apiEndpoint);
-
-//     // Set cURL options
-//     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-//     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-//         'Authorization: Bearer ' . $accessToken,
-//         'Content-Type: application/json',
-//     ]);
-//     curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-//     // Execute the cURL request
-//     $response = curl_exec($ch);
-
-//     // Check for cURL errors
-//     if (curl_errno($ch)) {
-//         return ['error' => 'cURL Error: ' . curl_error($ch)];
-//     }
-
-//     // Get the HTTP response code
-//     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-//     // Close the cURL session
-//     curl_close($ch);
-
-//     // Check for a successful response (HTTP status code 201)
-//     if ($httpCode == 201) {
-//         $responseData = json_decode($response, true);
-//         return $responseData;
-//     } else {
-//         // Handle error cases
-//         $errorResponse = json_decode($response, true);
-//         return ['error' => $errorResponse];
-//     }
-// }
