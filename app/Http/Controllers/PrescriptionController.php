@@ -14,13 +14,13 @@ class PrescriptionController extends Controller
     {
         // Get the DOCTOR PATIENTS appointments on the date and checked-in
         $bookings = Booking::where('date', date('m-d-Y'))
-            ->where('status', 1)
+            // ->where('status', 1)
             ->where('doctor_id', Auth::id())
             ->get();
         if ($request->date) {
             $formatDate = date('m-d-Y', strtotime($request->date));
             $bookings = Booking::where('date',  $formatDate)
-                ->where('status', 1)
+                // ->where('status', 1)
                 ->where('doctor_id', Auth::id())
                 ->get();
         }
@@ -79,5 +79,13 @@ class PrescriptionController extends Controller
     {
         $bookings = Prescription::get();
         return view('prescription.all', compact('bookings'));
+    }
+
+    public function toggleStatus($id)
+    {
+        $booking = Booking::find($id);
+        $booking->status = !$booking->status;
+        $booking->save();
+        return redirect()->back();
     }
 }

@@ -9,7 +9,6 @@ class PatientListController extends Controller
 {
     public function index(Request $request)
     { // Set timezone
-        date_default_timezone_set('America/New_York');
         if ($request->date) {
             $date = $request->date;
             $bookings = Booking::latest()->where('date', $date)->get();

@@ -24,7 +24,7 @@ class BookingFactory extends Factory
             'doctor_id' =>  User::where('role_id', Role::DOCTOR)->get()->random()->id,
             'time' =>  getRandomTime(),
             'date' => $startDate->format('m-d-Y'),
-            'status' => $this->faker->numberBetween(0, 1)
+            'status' => 0,
         ];
     }
 }

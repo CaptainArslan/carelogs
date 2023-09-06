@@ -33,7 +33,7 @@ class UserFactory extends Factory
             'phone_number' => $this->faker->phoneNumber(), // password
             'role_id' => $role_id,
             'department' => $department,
-            'image' => $this->faker->imageUrl(),
+            'image' => null,
             'gender' => $this->faker->randomElement([
                 'male', 'female', 'other'
             ]),

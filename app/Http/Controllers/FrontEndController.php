@@ -14,6 +14,7 @@ use Jubaer\Zoom\Facades\Zoom;
 use App\Traits\ZoomMeetingTrait;
 use Illuminate\Support\Facades\Log;
 use App\Mail\Booking as MailBooking;
+use App\Models\Disease;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Notifications\BookingMadeNotification;
@@ -102,7 +103,7 @@ class FrontEndController extends Controller
         try {
             Mail::to(Auth::user()->email)->send(new MailBooking($bookingData));
         } catch (\Exception $e) {
-            return redirect()->back()->with('errMessage', 'Booking confome but email not sent! <br>' . $e->getMessage());
+            return redirect()->back()->with('errMessage', 'Your Booking has been confimed but email not sent! <br>' . $e->getMessage());
         }
 
         return redirect()->back()->with('message', 'Your appointment was booked for ' . $date . ' at ' . $time . ' with ' . $doctor->name . '.');
@@ -190,6 +191,7 @@ class FrontEndController extends Controller
             $formatDate = date('m-d-Y', strtotime($request->date));
             $appointments = Appointment::where('date', $formatDate)->get();
         };
+        $diseases = Disease::get();
         return view('frontend.doctor', get_defined_vars());
     }
 

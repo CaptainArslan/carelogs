@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use App\Models\Disease;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
@@ -51,6 +52,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
         // return $this->hasOne(Role::class,);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
     }
 
     public function diseases()

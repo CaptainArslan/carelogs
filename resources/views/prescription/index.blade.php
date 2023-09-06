@@ -34,6 +34,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
+                                <th scope="col">Start Meeting</th>
                                 <th scope="col">Photo</th>
                                 <th scope="col">Date</th>
                                 <th scope="col">User</th>
@@ -45,6 +46,7 @@
                                 <th scope="col">Reports</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Prescription</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -57,6 +59,20 @@
                                 @else
                                     {{ getPlaceholderImage() }}
                                 @endif" width="80">
+                                </td>
+                                <td>
+                                    @if ($booking->status == 1)
+                                        <span class="text-success">Completed</span>
+                                    @else
+                                    <?php
+                                    $meeting_start_url = null;
+                                        if(!is_null($booking->meeting_details)){
+                                            $meeting = json_decode($booking->meeting_details);
+                                            $meeting_start_url = $meeting->start_url;
+                                        }
+                                    ?>
+                                        <a class="btn btn-primary" href="{{ $meeting_start_url }}"> Start Meeting</a>
+                                    @endif
                                 </td>
                                 <td>{{ $booking->date }}</td>
                                 <td>{{ $booking->user->name }}</td>
@@ -83,9 +99,13 @@
                                 </td>
                                 <td>
                                     @if ($booking->status == 0)
-                                    <a><button class="btn btn-warning">Pending</button></a>
+                                    <a href="{{ route('checkin.update.status', [$booking->id]) }}">
+                                        <button class="btn btn-warning">Pending</button>
+                                    </a>
                                     @else
-                                    <a><button class="btn btn-success">Checked-In</button></a>
+                                    <a href="{{ route('checkin.update.status', [$booking->id]) }}">
+                                        <button class="btn btn-success">Checked-In</button>
+                                    </a>
                                     @endif
                                 </td>
                                 <td>

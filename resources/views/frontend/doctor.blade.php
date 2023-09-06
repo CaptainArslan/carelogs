@@ -18,23 +18,51 @@
             @endif
 
             <div class="col-md-12 col-sm-6">
-                <div class="about-info" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="about-info">
                     <div class="col-md-12 col-sm-6">
-                        <h2 class="wow fadeInUp" data-wow-delay="0.1s">Available Doctors</h2>
+                        <h4 class="wow fadeInUp text-danger" data-wow-delay="0.1s">Seach Your Doctor</h4>
                     </div>
-                    <div class="col-md-12 col-sm-6">
+                    <!-- <div class="col-md-12 col-sm-6">
                         <form action="{{ route('frontend.doctor') }}" method="GET" id="form">
                             <input type="date" name="date" value="{{ request()->date }}" class="form-control" onchange="formSubmit()">
                         </form>
+                    </div> -->
+                </div>
+
+                <form action="{{ route('frontend.doctor') }}" method="GET" id="form">
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label class="text-danger" for="disease">Disease</label>
+                            <select id="disease" class="form-control" name="disease">
+                                <option>Choose...</option>
+                                @forelse ($diseases as $disease)
+                                <option value="{{ $disease->id }}" @if (request()->disease == $disease->id) selected @endif >{{ $disease->name }}</option>
+                                @empty
+                                <option value="">No Disease Found</option>
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="text-danger" for="availablity">Availablity</label>
+                            <input type="date" id="availablity" name="date" value="{{ request()->date }}" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary" name="filter" style="margin-top: 25px;">search</button>
                     </div>
 
+                </form>
+            </div>
+
+
+            <div class="about-info">
+                <div class="col-md-12 col-sm-6">
+                    <h2 class="wow fadeInUp" data-wow-delay="0.1s">Available Doctor</h2>
                 </div>
             </div>
             <div class="clearfix"></div>
             @forelse ($appointments as $key => $appointment)
             <div class="col-md-4 col-sm-6">
                 <div class="team-thumb wow fadeInUp" data-wow-delay="0.2s">
-                    <img src="{{ asset('images/team-image' . ($key + 1) . '.jpg') }}" class="img-responsive" alt="">
+                    <img src=" @if ($appointment->doctor->image)  {{ asset('uploads/') . $appointment->doctor->image }} @else {{  getPlaceholderImage() }}  @endif " class="img-responsive" alt="">
                     <div class="team-info">
                         <h3>{{ $appointment->doctor->name }}</h3>
                         <p>{{ $appointment->doctor->department }}</p>
