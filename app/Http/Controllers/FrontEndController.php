@@ -222,7 +222,7 @@ class FrontEndController extends Controller
             $result = createZoomMeeting($responseData['access_token'], $meetingSettings);
             return $result;
         } catch (\Throwable $th) {
-            //throw $th;
+            Log::info($th->getMessage());
         }
     }
 

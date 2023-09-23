@@ -34,8 +34,9 @@
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Start Meeting</th>
                                 <th scope="col">Photo</th>
+
+                                <th scope="col">Meeting</th>
                                 <th scope="col">Date</th>
                                 <th scope="col">User</th>
                                 <th scope="col">Email</th>
@@ -46,11 +47,11 @@
                                 <th scope="col">Reports</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Prescription</th>
-                                
+
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($bookings as $key=>$booking)
+                            @forelse($bookings as $key => $booking)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
                                 <td><img src="@if ($booking->user->image)
@@ -62,16 +63,16 @@
                                 </td>
                                 <td>
                                     @if ($booking->status == 1)
-                                        <span class="text-success">Completed</span>
+                                    <span class="text-success">Meeting Started</span>
                                     @else
                                     <?php
                                     $meeting_start_url = null;
-                                        if(!is_null($booking->meeting_details)){
-                                            $meeting = json_decode($booking->meeting_details);
-                                            $meeting_start_url = $meeting->start_url;
-                                        }
+                                    if (!is_null($booking->meeting_details)) {
+                                        $meeting = json_decode($booking->meeting_details);
+                                        $meeting_start_url = $meeting->start_url;
+                                    }
                                     ?>
-                                        <a class="btn btn-primary" href="{{ $meeting_start_url }}"> Start Meeting</a>
+                                    <a class="btn btn-primary start_meeting" data-url="{{ $meeting_start_url }}" data-id="{{ $booking->id }}" onclick="startMeeting(this)"> Start Meeting</a>
                                     @endif
                                 </td>
                                 <td>{{ $booking->date }}</td>
@@ -140,6 +141,22 @@
 <script>
     function formSubmit() {
         document.getElementById('form').submit();
+    }
+
+    function startMeeting(param) {
+        let id = $(param).data('id');
+        let url = $(param).data('url');
+        $.ajax({
+            type: "get",
+            url: "/status/update/" + id,
+            data: {
+                "_token": "{{ csrf_token() }}"
+            },
+            success: function(response) {
+                window.open(url, "_blank");
+                window.location.reload();
+            }
+        });
     }
 </script>
 

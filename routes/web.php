@@ -28,9 +28,11 @@ use App\Http\Controllers\PrescriptionController;
 Route::get('/', [FrontEndController::class, 'index'])->name('home');
 Route::get('/doctors', [FrontEndController::class, 'doctor'])->name('frontend.doctor');
 Route::get('/new-appointment/{id}/{date}', [FrontEndController::class, 'show'])->name('create.appointment');
-Auth::routes(['verify' => true]);
+
 Route::get('/dashboard', [DashBoardController::class, 'index'])->name('dashboard');
 Route::get('/home', [HomeController::class, 'index'])->name('frontend.home');
+
+Auth::routes();
 
 // Patient Routes
 Route::group(['middleware' => ['auth', 'patient']], function () {

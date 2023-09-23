@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
+use App\Models\Disease;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -27,7 +29,9 @@ class DoctorController extends Controller
      */
     public function create()
     {
-        return view('admin.doctor.create');
+        $departments  = Department::get();
+        $diseases  = Disease::get();
+        return view('admin.doctor.create', get_defined_vars());
     }
 
     /**

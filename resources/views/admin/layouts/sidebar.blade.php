@@ -11,23 +11,6 @@
         <div class="sidebar-content">
             <div class="nav-container">
                 <nav id="main-menu-navigation" class="navigation-main">
-                    <div class="nav-item active">
-                        <a href="{{ url('dashboard') }}"><i class="ik ik-bar-chart-2"></i><span>Dashboard</span></a>
-                    </div>
-                    <div class="nav-item has-sub">
-                        <a href="javascript:void(0)"><i class="ik ik-list"></i><span>Avaialablitiy Time</span> <span class="badge badge-danger"></span></a>
-                        <div class="submenu-content">
-                            <a href="{{ route('appointment.create') }}" class="menu-item">Create</a>
-                            <a href="{{ route('appointment.index') }}" class="menu-item">Check</a>
-                        </div>
-                    </div>
-                    <div class="nav-item has-sub">
-                        <a href="javascript:void(0)"><i class="ik ik-heart"></i><span>Prescription</span> <span class="badge badge-danger"></span></a>
-                        <div class="submenu-content">
-                            <a href="{{ route('booking') }}" class="menu-item">Bookings</a>
-                            <a href="{{ route('all.prescriptions') }}" class="menu-item">Prescribed Patients</a>
-                        </div>
-                    </div>
                     @if (Auth::user()->role_id == 1)
                     <div class="nav-item has-sub">
                         <a href="javascript:void(0)"><i class="ik ik-layers"></i><span>Department</span> <span class="badge badge-danger"></span></a>
@@ -49,6 +32,24 @@
                         <div class="submenu-content">
                             <a href="{{ route('patients') }}" class="menu-item">Today Appointment</a>
                             <a href="{{ route('all.appointments') }}" class="menu-item">All Time Appointment</a>
+                        </div>
+                    </div>
+                    @else
+                    <div class="nav-item active">
+                        <a href="{{ url('dashboard') }}"><i class="ik ik-bar-chart-2"></i><span>Dashboard</span></a>
+                    </div>
+                    <div class="nav-item has-sub">
+                        <a href="javascript:void(0)"><i class="ik ik-list"></i><span>Avaialablitiy Time</span> <span class="badge badge-danger"></span></a>
+                        <div class="submenu-content">
+                            <a href="{{ route('appointment.create') }}" class="menu-item">Create</a>
+                            <a href="{{ route('appointment.index') }}" class="menu-item">Check</a>
+                        </div>
+                    </div>
+                    <div class="nav-item has-sub">
+                        <a href="javascript:void(0)"><i class="ik ik-heart"></i><span>Prescription</span> <span class="badge badge-danger"></span></a>
+                        <div class="submenu-content">
+                            <a href="{{ route('booking') }}" class="menu-item">Bookings</a>
+                            <a href="{{ route('all.prescriptions') }}" class="menu-item">Prescribed Patients</a>
                         </div>
                     </div>
                     @endif
