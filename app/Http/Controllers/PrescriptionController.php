@@ -27,7 +27,6 @@ class PrescriptionController extends Controller
         return view('prescription.index', compact('bookings'));
     }
 
-
     public function store(Request $request)
     {
         // Validate uploaded files
@@ -67,7 +66,6 @@ class PrescriptionController extends Controller
             return redirect()->back()->with('errMessage', 'An error occurred while creating the prescription: ' . $e->getMessage());
         }
     }
-
 
     public function show($userId, $date)
     {
