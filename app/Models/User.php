@@ -59,9 +59,14 @@ class User extends Authenticatable
         return $this->hasMany(Appointment::class);
     }
 
+    // public function diseases()
+    // {
+    //     return $this->belongsToMany(Disease::class, 'disease_user', 'user_id', 'disease_id', 'id', 'id');
+    // }
+
     public function diseases()
     {
-        return $this->belongsToMany(Disease::class, 'user_diseases', 'user_id', 'disease_id', 'id', 'id');
+        return $this->belongsToMany(Disease::class, 'disease_user', 'user_id', 'disease_id', 'id', 'id');
     }
 
     public function userAvatar($request)

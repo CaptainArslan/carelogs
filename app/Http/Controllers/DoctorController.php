@@ -7,6 +7,8 @@ use App\Models\Disease;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class DoctorController extends Controller
 {
@@ -47,8 +49,9 @@ class DoctorController extends Controller
         $name = (new User)->userAvatar($request);
 
         $data['image'] = $name;
-        $data['password'] = bcrypt($request->password);
-        User::create($data);
+        $data['password'] = Hash::make($request->password);
+        $user = User::create($data);
+        $user->diseases()->sync($request->diseases);
 
         return redirect()->back()->with('message', 'Doctor added successfully');
     }
@@ -74,7 +77,8 @@ class DoctorController extends Controller
     public function edit($id)
     {
         $user = User::find($id);
-        return view('admin.doctor.edit', compact('user'));
+        $diseases = Disease::get();
+        return view('admin.doctor.edit', compact('user', 'diseases'));
     }
 
     /**

@@ -121,7 +121,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="">Phone number</label>
-                                    <input type="text" name="phone_number" class="form-control @error('phone_number') is-invalid @enderror" value="{{ old('phone_number') }}">
+                                    <input type="number" name="phone_number" class="form-control @error('phone_number') is-invalid @enderror" value="{{ old('phone_number') }}">
                                     @error('phone_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -146,13 +146,13 @@
                             </div>
                             <div class="col-md-6">
                                 <label>Specialization</label>
-                                <select name="disease[]" class="form-control @error('disease') is-invalid @enderror" multiple>
+                                <select name="diseases[]" class="form-control @error('diseases') is-invalid @enderror" multiple>
                                     <option value="">Please Select dieses specialist</option>
                                     @foreach ($diseases as $diseases)
                                     <option value="{{ $diseases->id }}">{{ $diseases->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('role_id')
+                                @error('diseases')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

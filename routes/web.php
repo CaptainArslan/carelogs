@@ -48,7 +48,7 @@ Route::group(['middleware' => ['auth', 'patient']], function () {
 Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::resource('doctor', 'DoctorController');
     Route::get('/patients', 'PatientListController@index')->name('patients');
-    Route::get('/status/update/{id}', 'PatientListController@toggleStatus')->name('update.status');
+    Route::get('/status/update/{id}', 'PatientListController@toggleStatus')->name('admin.update.status');
     Route::get('/all-patients', 'PatientListController@allTimeAppointment')->name('all.appointments');
     Route::resource('/department', 'DepartmentController');
 });

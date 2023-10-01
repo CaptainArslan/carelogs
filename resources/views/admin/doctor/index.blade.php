@@ -48,8 +48,7 @@
                                 <th>Address</th>
                                 <th>Phone number</th>
                                 <th>Department</th>
-                                <th class="nosort">&nbsp;</th>
-                                <th class="nosort">&nbsp;</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>

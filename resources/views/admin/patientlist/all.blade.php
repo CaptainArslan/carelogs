@@ -57,10 +57,10 @@
                                         <td>{{ $booking->doctor->name }}</td>
                                         <td>
                                             @if ($booking->status == 0)
-                                                <a href="{{ route('update.status', [$booking->id]) }}"><button
+                                                <a href="{{ url('status/update/'.$booking->id) }}"><button
                                                         class="btn btn-warning">Pending</button></a>
                                             @else
-                                                <a href="{{ route('update.status', [$booking->id]) }}"><button
+                                                <a href="{{ url('status/update/'.$booking->id) }}"><button
                                                         class="btn btn-success">Checked-In</button></a>
                                             @endif
                                         </td>

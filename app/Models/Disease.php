@@ -15,7 +15,6 @@ class Disease extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_diseases', 'disease_id', 'user_id', 'id', 'id');
+        return $this->belongsToMany(User::class, 'disease_user', 'disease_id', 'user_id', 'id', 'id');
     }
-
 }
